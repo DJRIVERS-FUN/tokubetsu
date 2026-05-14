@@ -303,9 +303,9 @@
         "location": "",
         "distance_km": "",
         "elevation_gain_m": "",
-        "avg_gradient_percent": "gravel/off-road",
-        "surface_type": "Off-road comparative segment",
-        "notes": ""
+        "avg_gradient_percent": "",
+        "surface_type": "gravel/off-road",
+        "notes": "Off-road comparative segment"
       },
       {
         "segment_id": 3482191722890517034,
@@ -314,9 +314,9 @@
         "location": "",
         "distance_km": "",
         "elevation_gain_m": "",
-        "avg_gradient_percent": "gravel/off-road",
-        "surface_type": "Off-road comparative segment",
-        "notes": ""
+        "avg_gradient_percent": "",
+        "surface_type": "gravel/off-road",
+        "notes": "Off-road comparative segment"
       }
     ],
     "segment_detection_note": "Automatic detection requires segment geometry or Strava streams. Current registry provides IDs/URLs and classes for matching once segment geometry is available."
