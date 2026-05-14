@@ -4,71 +4,363 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TOKUBETSU | Drivetrain Regulation Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-    --ink: #262626;
-    --muted: #6f6f6f;
-    --line: #e8e5e1;
-    --orange: #c96f2d;
-    --purple: #5e4b8b;
-    --pale-orange: #fff6ef;
-    --pale-purple: #f5f1fa;
+    --lab-purple: #520671;
+    --lab-grey: #6e6c66;
+    --lab-light-grey: #e6e2de;
+    --lab-soft-grey: #f7f6f4;
+    --lab-orange: #d7722c;
+    --lab-ink: #292723;
 }
+
 * { box-sizing: border-box; }
-body { margin: 0; padding: 0; background: #ffffff; color: var(--ink); font-family: Arial, Helvetica, sans-serif; line-height: 1.58; }
-.wrap { width: 100%; margin: 0; padding: 8px 0 56px 0; }
-.section { width: 100%; padding: 42px 0; border-top: 1px solid var(--line); }
-.section:first-child { border-top: none; padding-top: 18px; }
-.inner { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 28px; }
-.kicker { display: inline-block; color: var(--orange); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 14px; }
-h1 { margin: 0; font-size: clamp(34px, 5vw, 64px); line-height: 1.02; font-weight: 700; letter-spacing: -0.04em; }
-h1 span { color: var(--purple); }
-.lede { max-width: 850px; margin: 22px 0 0 0; color: var(--muted); font-size: clamp(16px, 1.6vw, 20px); }
-.rule { width: 88px; height: 4px; margin-top: 28px; background: linear-gradient(90deg, var(--orange), var(--purple)); border-radius: 4px; }
-.metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.metric-block { padding: 28px; border-right: 1px solid var(--line); background: #ffffff; }
-.metric-block:last-child { border-right: none; }
-.metric-label { color: var(--muted); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
-.metric-value { margin-top: 10px; font-size: 46px; line-height: 1; font-weight: 700; color: var(--ink); }
-.metric-note { margin-top: 10px; color: var(--muted); font-size: 14px; }
-.two-col { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 52px; align-items: start; }
-h2 { margin: 0 0 18px 0; font-size: clamp(24px, 3vw, 38px); line-height: 1.12; letter-spacing: -0.03em; }
-p { margin: 0 0 14px 0; }
-.muted { color: var(--muted); }
-.data-table { width: 100%; border-collapse: collapse; font-size: 15px; }
-.data-table tr { border-bottom: 1px solid var(--line); }
-.data-table td { padding: 12px 0; vertical-align: top; }
-.data-table td:first-child { width: 34%; color: var(--muted); }
-.tag-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
-.tag { border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; color: var(--muted); font-size: 13px; background: #ffffff; }
-.tag.orange { border-color: #ead4c4; background: var(--pale-orange); color: var(--orange); }
-.tag.purple { border-color: #d9d0e9; background: var(--pale-purple); color: var(--purple); }
-.pipeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); overflow: hidden; }
-.pipe-step { padding: 24px; min-height: 150px; border-right: 1px solid var(--line); background: #ffffff; }
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    color: var(--lab-grey);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    line-height: 1.4;
+}
+
+.wrap {
+    width: 100%;
+    margin: 0;
+    padding: 0 0 34px 0;
+    background: #ffffff;
+}
+
+.section {
+    width: 100%;
+    padding: 28px 0;
+    border-top: 1px solid var(--lab-light-grey);
+}
+
+.section:first-child {
+    border-top: none;
+    padding-top: 0;
+}
+
+.inner {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.lab-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0em;
+    color: var(--lab-purple);
+    text-transform: none;
+    margin: 0 0 0 0;
+    line-height: 1.28;
+}
+
+.lab-subtitle {
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--lab-grey);
+    max-width: 100%;
+    margin-top: 18px;
+}
+
+.lab-kicker {
+    font-family: 'DM Mono', monospace;
+    color: var(--lab-orange);
+    font-size: 13px;
+    line-height: 1.3;
+    margin-bottom: 10px;
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--lab-light-grey);
+    border-bottom: 1px solid var(--lab-light-grey);
+}
+
+.metric-block {
+    padding: 22px 22px 22px 0;
+    border-right: 1px solid var(--lab-light-grey);
+}
+
+.metric-block:not(:first-child) {
+    padding-left: 22px;
+}
+
+.metric-block:last-child {
+    border-right: none;
+}
+
+.metric-label {
+    font-family: 'DM Mono', monospace;
+    color: var(--lab-purple);
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+.metric-value {
+    margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 34px;
+    line-height: 1.1;
+    color: var(--lab-orange);
+}
+
+.metric-note {
+    margin-top: 8px;
+    color: var(--lab-grey);
+    font-size: 15px;
+    line-height: 1.35;
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 42px;
+    align-items: start;
+}
+
+.section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--lab-purple);
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+}
+
+.text-muted {
+    color: var(--lab-grey);
+    font-size: 18px;
+    line-height: 1.4;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    line-height: 1.35;
+}
+
+.data-table tr {
+    border-bottom: 1px solid var(--lab-light-grey);
+}
+
+.data-table td {
+    padding: 10px 0;
+    vertical-align: top;
+}
+
+.data-table td:first-child {
+    width: 34%;
+    color: var(--lab-purple);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+}
+
+.tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--lab-grey);
+    border: 1px solid var(--lab-light-grey);
+    padding: 5px 8px;
+    background: #ffffff;
+}
+
+.tag.orange { color: var(--lab-orange); }
+.tag.purple { color: var(--lab-purple); }
+
+.pipeline {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid var(--lab-light-grey);
+    border-bottom: 1px solid var(--lab-light-grey);
+}
+
+.pipe-step {
+    padding: 20px 18px 20px 0;
+    border-right: 1px solid var(--lab-light-grey);
+}
+
+.pipe-step:not(:first-child) {
+    padding-left: 18px;
+}
+
 .pipe-step:last-child { border-right: none; }
-.pipe-num { color: var(--orange); font-weight: 700; font-size: 13px; margin-bottom: 12px; }
-.pipe-title { font-weight: 700; margin-bottom: 8px; }
-.gear-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 20px; margin-top: 26px; }
-.gear-card { border-top: 2px solid var(--line); padding-top: 14px; }
-.gear-title { font-size: 30px; line-height: 1; font-weight: 700; color: var(--purple); letter-spacing: -0.04em; }
-.gear-stat { margin-top: 8px; font-size: 14px; color: var(--muted); }
-.gear-stat strong { color: var(--orange); }
-.footer-note { color: var(--muted); font-size: 13px; padding-top: 24px; }
+
+.pipe-num {
+    font-family: 'DM Mono', monospace;
+    color: var(--lab-orange);
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.pipe-title {
+    font-family: 'DM Mono', monospace;
+    color: var(--lab-purple);
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.pipe-text {
+    color: var(--lab-grey);
+    font-size: 15px;
+    line-height: 1.35;
+}
+
+.gear-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 18px;
+    margin-top: 22px;
+}
+
+.gear-card {
+    border-top: 1px solid var(--lab-light-grey);
+    padding-top: 12px;
+}
+
+.gear-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    color: var(--lab-purple);
+    line-height: 1.2;
+}
+
+.gear-stat {
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 1.35;
+    color: var(--lab-grey);
+}
+
+.gear-stat strong {
+    color: var(--lab-orange);
+    font-weight: 700;
+}
+
+.footer-note {
+    color: var(--lab-grey);
+    font-size: 14px;
+    line-height: 1.35;
+    margin-top: 18px;
+}
+
 @media (max-width: 800px) {
-    .metrics, .two-col, .pipeline { grid-template-columns: 1fr; }
-    .metric-block, .pipe-step { border-right: none; border-bottom: 1px solid var(--line); }
-    .metric-block:last-child, .pipe-step:last-child { border-bottom: none; }
-    .inner { padding: 0 18px; }
+    .metrics,
+    .two-col,
+    .pipeline {
+        grid-template-columns: 1fr;
+    }
+    .metric-block,
+    .metric-block:not(:first-child),
+    .pipe-step,
+    .pipe-step:not(:first-child) {
+        padding-left: 0;
+        padding-right: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--lab-light-grey);
+    }
+    .metric-block:last-child,
+    .pipe-step:last-child {
+        border-bottom: none;
+    }
 }
 </style>
 </head>
 <body>
 <div class="wrap">
-<section class="section"><div class="inner"><div class="kicker">Drivetrain Regulation Study</div><h1>TOKUBETSU <span>Research Dashboard</span></h1><p class="lede">A longitudinal field-based study of cadence regulation, gear selection, cassette configuration, and human–machine coordination across repeated road and off-road Strava segment environments.</p><div class="rule"></div></div></section>
-<section class="section" style="padding-top:0; padding-bottom:0;"><div class="inner" style="padding-top:0; padding-bottom:0;"><div class="metrics"><div class="metric-block"><div class="metric-label">Analyzed rides</div><div class="metric-value" id="rides">1</div><div class="metric-note">processed telemetry datasets</div></div><div class="metric-block"><div class="metric-label">Monitored segments</div><div class="metric-value" id="segments">9</div><div class="metric-note">road, variety, and off-road segments</div></div><div class="metric-block"><div class="metric-label">Drivetrain setups</div><div class="metric-value" id="setups">1</div><div class="metric-note">tracked cassette / chainring systems</div></div></div></div></section>
-<section class="section"><div class="inner two-col"><div><div class="kicker">Current Dataset</div><h2 id="ride_title">R001_0513_GR</h2><p class="muted">Initial TOKUBETSU test ride used to validate the repository structure, metadata workflow, Di2 export layer, and public dashboard pipeline.</p><div class="tag-row"><span class="tag orange">GRX Di2</span><span class="tag purple">10–51 cassette</span><span class="tag">field telemetry</span></div></div><div><table class="data-table"><tr><td>Bike</td><td id="bike">Canyon Grizl</td></tr><tr><td>Cassette</td><td id="cassette">10–51 Shimano Deore XT CS-M8200-12</td></tr><tr><td>Chainring</td><td id="chainring">44T</td></tr><tr><td>Wheelset</td><td id="wheelset">GRC1100</td></tr><tr><td>Tyres</td><td id="tyres">Terra Speed 40</td></tr></table></div></div></section>
-<section class="section"><div class="inner"><div class="kicker">Processing Architecture</div><h2>From ride files to research objects</h2><div class="pipeline"><div class="pipe-step"><div class="pipe-num">01</div><div class="pipe-title">FIT telemetry</div><p class="muted">Garmin ride file ingestion for power, cadence, speed, GPS, and elevation.</p></div><div class="pipe-step"><div class="pipe-num">02</div><div class="pipe-title">Di2 export</div><p class="muted">GRX Di2 gear-state data aligned with ride-level metadata.</p></div><div class="pipe-step"><div class="pipe-num">03</div><div class="pipe-title">Segment registry</div><p class="muted">Repeated Strava segments treated as ecological test environments.</p></div><div class="pipe-step"><div class="pipe-num">04</div><div class="pipe-title">Dashboard JSON</div><p class="muted">Processed summaries feed public visualisations while raw files remain protected.</p></div></div></div></section>
-<section class="section"><div class="inner"><div class="kicker">Gear Occupancy</div><h2>Observed drivetrain behaviour</h2><p class="muted">Aggregate Di2Stats data are used here to summarize gear-state occupancy, cadence, power, and gradient patterns from the first test ride.</p><div id="gearGrid" class="gear-grid"><div class="muted">Gear summary loading…</div></div><div class="footer-note">Current visualization layer uses aggregate Di2Stats exports. Exact shift timing will become available once timestamped shift-event telemetry is integrated.</div></div></section>
+
+<section class="section">
+    <div class="inner">
+        <div class="lab-title">TOKUBETSU: Drivetrain Regulation and Human–Machine Performance</div>
+        <div class="lab-subtitle">This active research dashboard documents a field-based study of cadence regulation, gear selection, cassette configuration and human–machine coordination across repeated road and off-road Strava segment environments.</div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="inner">
+        <div class="metrics">
+            <div class="metric-block">
+                <div class="metric-label">Analyzed rides</div>
+                <div class="metric-value" id="rides">1</div>
+                <div class="metric-note">processed telemetry datasets</div>
+            </div>
+            <div class="metric-block">
+                <div class="metric-label">Monitored segments</div>
+                <div class="metric-value" id="segments">9</div>
+                <div class="metric-note">road, variety and off-road segments</div>
+            </div>
+            <div class="metric-block">
+                <div class="metric-label">Drivetrain setups</div>
+                <div class="metric-value" id="setups">1</div>
+                <div class="metric-note">tracked cassette / chainring systems</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="inner two-col">
+        <div>
+            <div class="lab-kicker">Current dataset</div>
+            <div class="section-title" id="ride_title">R001_0513_GR</div>
+            <div class="text-muted">Initial TOKUBETSU test ride used to validate the repository structure, metadata workflow, Di2 export layer and public dashboard pipeline.</div>
+            <div class="tag-row"><span class="tag orange">GRX Di2</span><span class="tag purple">10–51 cassette</span><span class="tag">field telemetry</span></div>
+        </div>
+        <div>
+            <table class="data-table">
+                <tr><td>Bike</td><td id="bike">Canyon Grizl</td></tr>
+                <tr><td>Cassette</td><td id="cassette">10–51 Shimano Deore XT CS-M8200-12</td></tr>
+                <tr><td>Chainring</td><td id="chainring">44T</td></tr>
+                <tr><td>Wheelset</td><td id="wheelset">GRC1100</td></tr>
+                <tr><td>Tyres</td><td id="tyres">Terra Speed 40</td></tr>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="inner">
+        <div class="lab-kicker">Processing architecture</div>
+        <div class="section-title">From ride files to research objects</div>
+        <div class="pipeline">
+            <div class="pipe-step"><div class="pipe-num">01</div><div class="pipe-title">FIT telemetry</div><div class="pipe-text">Garmin ride file ingestion for power, cadence, speed, GPS and elevation.</div></div>
+            <div class="pipe-step"><div class="pipe-num">02</div><div class="pipe-title">Di2 export</div><div class="pipe-text">GRX Di2 gear-state data aligned with ride-level metadata.</div></div>
+            <div class="pipe-step"><div class="pipe-num">03</div><div class="pipe-title">Segment registry</div><div class="pipe-text">Repeated Strava segments treated as ecological test environments.</div></div>
+            <div class="pipe-step"><div class="pipe-num">04</div><div class="pipe-title">Dashboard JSON</div><div class="pipe-text">Processed summaries feed visualisations while raw files remain protected.</div></div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="inner">
+        <div class="lab-kicker">Gear occupancy</div>
+        <div class="section-title">Observed drivetrain behaviour</div>
+        <div class="text-muted">Aggregate Di2Stats data are used here to summarize gear-state occupancy, cadence, power and gradient patterns from the first test ride.</div>
+        <div id="gearGrid" class="gear-grid"><div class="text-muted">Gear summary loading…</div></div>
+        <div class="footer-note">Current visualization layer uses aggregate Di2Stats exports. Exact shift timing will become available once timestamped shift-event telemetry is integrated.</div>
+    </div>
+</section>
+
 </div>
 <script>
 fetch('data/summary.json')
@@ -103,7 +395,7 @@ fetch('data/R001_0513_GR_gear_summary.json')
 })
 .catch(error => {
     const grid = document.getElementById('gearGrid');
-    grid.innerHTML = '<div class="muted">Gear summary JSON has not been generated yet. Run notebooks/build_gear_visuals.py and push the output to docs/data/.</div>';
+    grid.innerHTML = '<div class="text-muted">Gear summary JSON has not been generated yet. Run notebooks/build_gear_visuals.py and push the output to docs/data/.</div>';
 });
 </script>
 </body>
