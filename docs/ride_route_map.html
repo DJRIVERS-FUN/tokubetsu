@@ -3,53 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ride Route Map</title>
+<title>Ride Route Visualizer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQKJEqa0R6F8B8G1J8BpQpnu8A0Kz0w=" crossorigin="">
 <style>
-:root{--lab-purple:#520671;--lab-grey:#6e6c66;--lab-light-grey:#e6e2de;--lab-soft-grey:#f7f6f4;--lab-soft-orange:#fff4ec;--lab-orange-border:#efd4c2;--lab-orange:#d7722c;--lab-ink:#292723}*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;padding:0;background:#fff;color:var(--lab-grey);font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.4}.map-wrap{width:100%;margin:0;padding:0;background:#fff}.map-card{position:relative;width:100%;height:620px;overflow:hidden;border:1px solid var(--lab-light-grey);border-radius:8px;background:var(--lab-soft-grey)}#map{width:100%;height:100%;min-height:620px}.map-controls{position:absolute;top:12px;right:12px;z-index:700;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}.map-button{appearance:none;border:1px solid var(--lab-light-grey);background:rgba(255,255,255,.96);color:var(--lab-purple);font-family:'DM Mono',monospace;font-size:12px;padding:8px 10px;border-radius:8px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.08)}.map-button.active{background:var(--lab-soft-orange);border-color:var(--lab-orange-border);color:var(--lab-orange)}.status-card{position:absolute;left:16px;right:16px;bottom:16px;z-index:650;background:rgba(255,255,255,.96);border:1px solid var(--lab-light-grey);border-radius:8px;padding:12px 14px;color:var(--lab-grey);font-size:13px;line-height:1.4}.status-card strong{font-family:'DM Mono',monospace;color:var(--lab-purple);font-size:12px}.status-card.hidden{display:none}.leaflet-container{background:var(--lab-soft-grey)}@media(max-width:800px){.map-card{height:500px}#map{min-height:500px}.map-controls{top:10px;right:10px;left:10px;justify-content:flex-end}.map-button{font-size:11px;padding:7px 9px}}
+:root{--lab-purple:#520671;--lab-grey:#6e6c66;--lab-light-grey:#e6e2de;--lab-soft-grey:#f7f6f4;--lab-soft-orange:#fff4ec;--lab-orange-border:#efd4c2;--lab-orange:#d7722c;--lab-ink:#292723}*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;padding:0;background:#fff;color:var(--lab-grey);font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.4}.map-wrap{width:100%;margin:0;padding:0;background:#fff}.map-card{position:relative;width:100%;height:620px;overflow:hidden;border:1px solid var(--lab-light-grey);border-radius:8px;background:radial-gradient(circle at 18% 22%,rgba(215,114,44,.16),transparent 32%),radial-gradient(circle at 78% 66%,rgba(82,6,113,.12),transparent 34%),linear-gradient(135deg,#fbfaf8 0%,#f2efeb 100%)}canvas{position:absolute;inset:0;width:100%;height:100%;display:block}.map-controls{position:absolute;top:12px;right:12px;z-index:10;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}.map-button{appearance:none;border:1px solid var(--lab-light-grey);background:rgba(255,255,255,.94);color:var(--lab-purple);font-family:'DM Mono',monospace;font-size:12px;padding:8px 10px;border-radius:8px;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.08)}.map-button.active{background:var(--lab-soft-orange);border-color:var(--lab-orange-border);color:var(--lab-orange)}.status-card{position:absolute;left:16px;right:16px;bottom:16px;z-index:9;background:rgba(255,255,255,.94);border:1px solid var(--lab-light-grey);border-radius:8px;padding:12px 14px;color:var(--lab-grey);font-size:13px;line-height:1.4}.status-card strong{font-family:'DM Mono',monospace;color:var(--lab-purple);font-size:12px}.status-card.hidden{display:none}.mini-label{position:absolute;left:16px;top:16px;z-index:8;font-family:'DM Mono',monospace;font-size:11px;color:rgba(82,6,113,.72);background:rgba(255,255,255,.72);border:1px solid rgba(230,226,222,.8);border-radius:8px;padding:7px 9px;letter-spacing:.02em}@media(max-width:800px){.map-card{height:500px}.map-controls{top:10px;right:10px;left:10px;justify-content:flex-end}.map-button{font-size:11px;padding:7px 9px}.mini-label{display:none}}
 </style>
 </head>
 <body>
 <div class="map-wrap">
-  <div class="map-card">
-    <div id="map"></div>
+  <div class="map-card" id="mapCard">
+    <canvas id="routeCanvas"></canvas>
+    <div class="mini-label" id="miniLabel">ROUTE FIELD</div>
     <div class="map-controls">
-      <button class="map-button active" id="routeBtn" type="button">Routes</button>
+      <button class="map-button active" id="bothBtn" type="button">Route + Heat</button>
+      <button class="map-button" id="routeBtn" type="button">Routes</button>
       <button class="map-button" id="heatBtn" type="button">Heatmap</button>
-      <button class="map-button" id="fitBtn" type="button">Fit View</button>
     </div>
     <div class="status-card" id="statusCard"><strong>Loading route data…</strong><br>Looking for <code>data/routes.json</code>.</div>
   </div>
 </div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 <script>
-var map=L.map('map',{scrollWheelZoom:false,zoomControl:true,preferCanvas:true}).setView([41.9,140.7],11);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
-var routeLayer=L.layerGroup().addTo(map);
-var heatLayer=null;
-var bounds=[];
-var currentData=null;
-var routeBtn=document.getElementById('routeBtn');
-var heatBtn=document.getElementById('heatBtn');
-var fitBtn=document.getElementById('fitBtn');
+var canvas=document.getElementById('routeCanvas');
+var ctx=canvas.getContext('2d');
+var card=document.getElementById('mapCard');
 var statusCard=document.getElementById('statusCard');
-function refreshMap(){setTimeout(function(){map.invalidateSize();if(bounds.length){map.fitBounds(bounds,{padding:[24,24],maxZoom:15});}},120);setTimeout(function(){map.invalidateSize();},500);}
+var miniLabel=document.getElementById('miniLabel');
+var buttons={both:document.getElementById('bothBtn'),routes:document.getElementById('routeBtn'),heat:document.getElementById('heatBtn')};
+var mode='both';
+var routeData=[];
+var projectedRoutes=[];
+var bounds=null;
 function setStatus(title,msg,hideSoon){statusCard.classList.remove('hidden');statusCard.innerHTML='<strong>'+title+'</strong><br>'+msg;if(hideSoon){setTimeout(function(){statusCard.classList.add('hidden');},1800);}}
+function setMode(next){mode=next;Object.keys(buttons).forEach(function(k){buttons[k].classList.toggle('active',k===next);});draw();}
+buttons.both.addEventListener('click',function(){setMode('both');});
+buttons.routes.addEventListener('click',function(){setMode('routes');});
+buttons.heat.addEventListener('click',function(){setMode('heat');});
 function normalisePoint(p){if(Array.isArray(p)&&p.length>=2){return [Number(p[0]),Number(p[1])];}if(p&&p.lat!==undefined&&p.lon!==undefined){return [Number(p.lat),Number(p.lon)];}if(p&&p.latitude!==undefined&&p.longitude!==undefined){return [Number(p.latitude),Number(p.longitude)];}return null;}
 function getRoutes(data){if(Array.isArray(data)){return data;}if(data&&Array.isArray(data.routes)){return data.routes;}if(data&&Array.isArray(data.rides)){return data.rides;}return [];}
-function drawRoutes(data){currentData=data;routeLayer.clearLayers();bounds=[];var routes=getRoutes(data);var totalPoints=0;routes.forEach(function(r,i){var raw=r.coordinates||r.points||r.route||[];var pts=raw.map(normalisePoint).filter(Boolean).filter(function(p){return isFinite(p[0])&&isFinite(p[1]);});if(pts.length<2){return;}totalPoints+=pts.length;bounds=bounds.concat(pts);var line=L.polyline(pts,{color:i%2===0?'#520671':'#d7722c',weight:3,opacity:.72,smoothFactor:1.2});var label=(r.ride_id||r.id||r.name||'Ride '+(i+1));line.bindPopup('<strong>'+label+'</strong>');routeLayer.addLayer(line);});if(bounds.length){routeLayer.addTo(map);map.fitBounds(bounds,{padding:[24,24],maxZoom:15});setStatus('Route data loaded',routes.length+' ride record(s), '+totalPoints+' GPS point(s).',true);refreshMap();}else{setStatus('No displayable GPS points found','The map loaded, but routes.json does not contain usable route coordinates.',false);refreshMap();}}
-function showRoutes(){if(heatLayer){map.removeLayer(heatLayer);}routeLayer.addTo(map);routeBtn.classList.add('active');heatBtn.classList.remove('active');refreshMap();}
-function showHeat(){if(!currentData){return;}var heat=[];getRoutes(currentData).forEach(function(r){var raw=r.coordinates||r.points||r.route||[];var step=Math.max(1,Math.floor(raw.length/3500));raw.forEach(function(p,idx){if(idx%step!==0){return;}var pt=normalisePoint(p);if(pt){heat.push([pt[0],pt[1],0.65]);}});});if(heatLayer){map.removeLayer(heatLayer);}routeLayer.remove();heatLayer=L.heatLayer(heat,{radius:18,blur:22,maxZoom:15,gradient:{0.25:'#520671',0.55:'#d7722c',1:'#f6c08f'}}).addTo(map);routeBtn.classList.remove('active');heatBtn.classList.add('active');refreshMap();}
-routeBtn.addEventListener('click',showRoutes);
-heatBtn.addEventListener('click',showHeat);
-fitBtn.addEventListener('click',function(){if(bounds.length){map.fitBounds(bounds,{padding:[24,24],maxZoom:15});refreshMap();}});
-window.addEventListener('resize',refreshMap);
-window.addEventListener('load',refreshMap);
-fetch('data/routes.json?v='+Date.now()).then(function(response){if(!response.ok){throw new Error('missing');}return response.json();}).then(drawRoutes).catch(function(){setStatus('Route data file not found','Create data/routes.json from privacy-filtered FIT/GPX data.',false);refreshMap();});
+function resizeCanvas(){var rect=card.getBoundingClientRect();var ratio=window.devicePixelRatio||1;canvas.width=Math.max(1,Math.floor(rect.width*ratio));canvas.height=Math.max(1,Math.floor(rect.height*ratio));canvas.style.width=rect.width+'px';canvas.style.height=rect.height+'px';ctx.setTransform(ratio,0,0,ratio,0,0);project();draw();}
+function computeBounds(routes){var minLat=Infinity,maxLat=-Infinity,minLon=Infinity,maxLon=-Infinity,total=0;routes.forEach(function(r){r.points.forEach(function(p){minLat=Math.min(minLat,p[0]);maxLat=Math.max(maxLat,p[0]);minLon=Math.min(minLon,p[1]);maxLon=Math.max(maxLon,p[1]);total++;});});if(!total){return null;}return {minLat:minLat,maxLat:maxLat,minLon:minLon,maxLon:maxLon,total:total};}
+function projectPoint(p,w,h,pad){var lonSpan=(bounds.maxLon-bounds.minLon)||0.001;var latSpan=(bounds.maxLat-bounds.minLat)||0.001;var x=pad+((p[1]-bounds.minLon)/lonSpan)*(w-pad*2);var y=pad+((bounds.maxLat-p[0])/latSpan)*(h-pad*2);return [x,y];}
+function project(){if(!bounds){return;}var rect=card.getBoundingClientRect();var w=rect.width;var h=rect.height;var pad=Math.max(28,Math.min(w,h)*0.08);projectedRoutes=routeData.map(function(r){return {id:r.id,points:r.points.map(function(p){return projectPoint(p,w,h,pad);})};});}
+function drawBackground(w,h){ctx.clearRect(0,0,w,h);ctx.save();ctx.strokeStyle='rgba(82,6,113,.06)';ctx.lineWidth=1;var gap=42;for(var x=0;x<w;x+=gap){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}for(var y=0;y<h;y+=gap){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}ctx.strokeStyle='rgba(215,114,44,.16)';ctx.lineWidth=1.2;for(var i=-h;i<w;i+=95){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+h,h);ctx.stroke();}ctx.restore();}
+function drawHeat(w,h){var all=[];projectedRoutes.forEach(function(r){var step=Math.max(1,Math.floor(r.points.length/1600));r.points.forEach(function(p,i){if(i%step===0){all.push(p);}});});ctx.save();ctx.globalCompositeOperation='multiply';all.forEach(function(p){var grad=ctx.createRadialGradient(p[0],p[1],0,p[0],p[1],28);grad.addColorStop(0,'rgba(215,114,44,.34)');grad.addColorStop(.45,'rgba(215,114,44,.18)');grad.addColorStop(1,'rgba(82,6,113,0)');ctx.fillStyle=grad;ctx.beginPath();ctx.arc(p[0],p[1],28,0,Math.PI*2);ctx.fill();});ctx.restore();}
+function drawRoutes(w,h){projectedRoutes.forEach(function(r,idx){if(r.points.length<2){return;}ctx.save();ctx.lineJoin='round';ctx.lineCap='round';ctx.shadowColor='rgba(82,6,113,.22)';ctx.shadowBlur=9;ctx.strokeStyle=idx%2===0?'rgba(82,6,113,.88)':'rgba(215,114,44,.88)';ctx.lineWidth=4.2;ctx.beginPath();r.points.forEach(function(p,i){if(i===0){ctx.moveTo(p[0],p[1]);}else{ctx.lineTo(p[0],p[1]);}});ctx.stroke();ctx.shadowBlur=0;ctx.strokeStyle='rgba(255,255,255,.72)';ctx.lineWidth=1.25;ctx.stroke();ctx.restore();});}
+function drawEndpoints(){projectedRoutes.forEach(function(r){if(r.points.length<2){return;}var start=r.points[0];var end=r.points[r.points.length-1];ctx.save();ctx.fillStyle='rgba(82,6,113,.95)';ctx.beginPath();ctx.arc(start[0],start[1],4,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(215,114,44,.95)';ctx.beginPath();ctx.arc(end[0],end[1],4,0,Math.PI*2);ctx.fill();ctx.restore();});}
+function draw(){var rect=card.getBoundingClientRect();var w=rect.width;var h=rect.height;drawBackground(w,h);if(!bounds){return;}if(mode==='heat'||mode==='both'){drawHeat(w,h);}if(mode==='routes'||mode==='both'){drawRoutes(w,h);drawEndpoints();}}
+function loadRoutes(data){var routes=getRoutes(data).map(function(r,i){var raw=r.coordinates||r.points||r.route||[];var pts=raw.map(normalisePoint).filter(Boolean).filter(function(p){return isFinite(p[0])&&isFinite(p[1]);});return {id:r.ride_id||r.id||r.name||('Ride '+(i+1)),points:pts};}).filter(function(r){return r.points.length>1;});routeData=routes;bounds=computeBounds(routes);if(bounds){miniLabel.textContent=routes.length+' ROUTE / '+bounds.total+' GPS POINTS';project();draw();setStatus('Route field loaded',routes.length+' ride record(s), '+bounds.total+' GPS point(s).',true);}else{setStatus('No route geometry found','The file loaded, but no usable coordinates were found.',false);}resizeCanvas();}
+window.addEventListener('resize',resizeCanvas);
+window.addEventListener('load',resizeCanvas);
+fetch('data/routes.json?v='+Date.now()).then(function(response){if(!response.ok){throw new Error('missing');}return response.json();}).then(loadRoutes).catch(function(){setStatus('Route data file not found','Create data/routes.json from privacy-filtered FIT/GPX data.',false);resizeCanvas();});
+resizeCanvas();
 </script>
 </body>
 </html>
