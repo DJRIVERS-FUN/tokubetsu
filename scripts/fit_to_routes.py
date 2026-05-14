@@ -8,7 +8,7 @@ Expected output:
 /docs/data/routes.json
 
 Usage:
-python fit_to_routes.py /path/to/fit_directory
+python3 scripts/fit_to_routes.py rides/
 
 Recommended:
 - remove first/last GPS sections for privacy
@@ -67,6 +67,31 @@ def trim_route(coords, trim_km=1.5):
     return trimmed
 
 
+def extract_value(record, field_name):
+    """Robust extraction across Garmin SDK structures."""
+
+    # attribute access
+    value = getattr(record, field_name, None)
+    if value is not None:
+        return value
+
+    # dictionary-style access
+    if isinstance(record, dict):
+        value = record.get(field_name)
+        if value is not None:
+            return value
+
+    # fields list access
+    fields = getattr(record, 'fields', None)
+    if fields:
+        for field in fields:
+            name = getattr(field, 'name', None)
+            if name == field_name:
+                return getattr(field, 'value', None)
+
+    return None
+
+
 def parse_fit_file(filepath):
     try:
         from garmin_fit_sdk import Decoder, Stream
@@ -89,15 +114,22 @@ def parse_fit_file(filepath):
 
     coords = []
 
-    for record in messages.get("record_mesgs", []):
-        lat = getattr(record, "position_lat", None)
-        lon = getattr(record, "position_long", None)
+    records = messages.get("record_mesgs", [])
+
+    print(f"  Found {len(records)} FIT records")
+
+    for record in records:
+        lat = extract_value(record, "position_lat")
+        lon = extract_value(record, "position_long")
 
         if lat is None or lon is None:
             continue
 
-        lat_deg = lat * SEMICIRCLE_TO_DEG
-        lon_deg = lon * SEMICIRCLE_TO_DEG
+        try:
+            lat_deg = float(lat) * SEMICIRCLE_TO_DEG
+            lon_deg = float(lon) * SEMICIRCLE_TO_DEG
+        except Exception:
+            continue
 
         coords.append([
             round(lat_deg, 6),
@@ -109,7 +141,7 @@ def parse_fit_file(filepath):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python fit_to_routes.py /path/to/fit_directory")
+        print("Usage: python3 scripts/fit_to_routes.py rides/")
         sys.exit(1)
 
     fit_dir = Path(sys.argv[1])
@@ -142,7 +174,7 @@ def main():
             "coordinates": coords,
         })
 
-        print(f"  Exported {len(coords)} points")
+        print(f"  Exported {len(coords)} GPS points")
 
     output = {
         "routes": routes
