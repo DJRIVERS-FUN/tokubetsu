@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Build gear-state timeline JSON for the Tokubetsu hidden dashboard.
+Build timeline JSON for the Tokubetsu hidden dashboard.
 
 Input:
   data/raw/R001_0513_GR.fit
@@ -10,24 +10,26 @@ Output:
 
 Notes:
   - This script reads Garmin FIT record messages.
-  - It looks for time, power, cadence, speed, grade and gear-related fields.
-  - If gear fields are absent from the FIT file, the output will still contain
-    telemetry points but gear values will be null. In that case, a true gear
-    timeline requires a time-series Di2 export rather than the aggregate
-    Di2Stats CSV currently stored in data/raw/R001_0513_GR_di2.csv.
+  - It extracts elapsed time, power, cadence, speed and grade where available.
+  - It also looks for gear-related fields.
+  - If gear fields are absent from the FIT file, points are assigned to a
+    fallback lane called "Telemetry" so the dashboard still renders a useful
+    temporal power/cadence/speed plot.
+  - A true gear-state timeline still requires a time-series Di2 export rather
+    than the aggregate Di2Stats CSV currently stored in data/raw/.
 
 Install dependency if needed:
   pip install fitparse
 
 Run from repository root:
-  python notebooks/build_timeline_json.py
+  python3 notebooks/build_timeline_json.py
 """
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Optional
 
 try:
     from fitparse import FitFile
@@ -55,7 +57,6 @@ GEAR_FIELD_CANDIDATES = (
 
 
 def field_dict(record: Any) -> Dict[str, Any]:
-    """Convert a FIT record message into a simple field dictionary."""
     values: Dict[str, Any] = {}
     for field in record:
         try:
@@ -74,7 +75,6 @@ def get_number(values: Dict[str, Any], *names: str) -> Optional[float]:
 
 
 def normalize_speed_kph(values: Dict[str, Any]) -> Optional[float]:
-    # fitparse usually converts enhanced_speed/speed to m/s.
     speed = get_number(values, "enhanced_speed", "speed")
     if speed is None:
         return None
@@ -85,15 +85,12 @@ def normalize_grade(values: Dict[str, Any]) -> Optional[float]:
     grade = get_number(values, "grade")
     if grade is None:
         return None
-    # Garmin grade may already be in percent. The dashboard expects decimal.
-    # If magnitude is clearly percent-like, convert to decimal.
     if abs(grade) > 1:
         return grade / 100
     return grade
 
 
 def infer_gear_label(values: Dict[str, Any]) -> Optional[str]:
-    """Infer a display label such as 1x39 when FIT gear fields are present."""
     front_teeth = values.get("front_gear_teeth")
     rear_teeth = values.get("rear_gear_teeth")
     front_num = values.get("front_gear_num")
@@ -102,7 +99,6 @@ def infer_gear_label(values: Dict[str, Any]) -> Optional[str]:
     if isinstance(front_teeth, (int, float)) and isinstance(rear_teeth, (int, float)):
         return f"{int(front_teeth)}x{int(rear_teeth)}"
 
-    # For 1x systems, rear gear teeth are sometimes present without front teeth.
     if isinstance(rear_teeth, (int, float)):
         return f"1x{int(rear_teeth)}"
 
@@ -143,20 +139,25 @@ def build_points() -> Dict[str, Any]:
             if field_name in values and values.get(field_name) is not None:
                 discovered_gear_fields.add(field_name)
 
+        gear_label = infer_gear_label(values)
+
         point = {
             "time_s": time_s,
-            "gear": infer_gear_label(values),
+            "gear": gear_label,
             "power": get_number(values, "power"),
             "cadence": get_number(values, "cadence"),
             "speed_kph": normalize_speed_kph(values),
             "grade": normalize_grade(values),
         }
 
-        # Keep points with at least some useful telemetry.
         if any(point.get(k) is not None for k in ("gear", "power", "cadence", "speed_kph", "grade")):
             raw_points.append(point)
 
-    # Downsample only if very dense, keeping approximately one point every 2 seconds.
+    has_real_gear = bool(discovered_gear_fields) and any(p.get("gear") for p in raw_points)
+    if not has_real_gear:
+        for point in raw_points:
+            point["gear"] = "Telemetry"
+
     points = []
     last_time = -999
     for point in raw_points:
@@ -170,6 +171,8 @@ def build_points() -> Dict[str, Any]:
         "point_count": len(points),
         "raw_point_count": len(raw_points),
         "gear_fields_found": sorted(discovered_gear_fields),
+        "has_real_gear_timeline": has_real_gear,
+        "fallback_lane": None if has_real_gear else "Telemetry",
         "fit_fields_found": sorted(discovered_fields),
         "points": points,
     }
@@ -182,8 +185,9 @@ def main() -> None:
     print(f"Wrote {OUT_PATH}")
     print(f"Timeline points: {data['point_count']}")
     print(f"Gear fields found: {data['gear_fields_found']}")
-    if not data["gear_fields_found"]:
+    if not data["has_real_gear_timeline"]:
         print("WARNING: No gear fields found in FIT record messages.")
+        print("Using fallback lane: Telemetry")
         print("A true gear-state timeline requires a time-series Di2 export.")
 
 
