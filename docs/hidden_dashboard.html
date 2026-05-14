@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TOKUBETSU | Drivetrain Regulation Study</title>
+<title>R8 TOKUBETSU B03 | Rivers Lab | Drivetrain Regulation Study</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -291,8 +291,8 @@ body {
 
 <section class="section">
     <div class="inner">
-        <div class="lab-title">TOKUBETSU: Drivetrain Regulation and Human–Machine Performance</div>
-        <div class="lab-subtitle">This active research dashboard documents a field-based study of cadence regulation, gear selection, cassette configuration and human–machine coordination across repeated road and off-road Strava segment environments.</div>
+        <div class="lab-title">R8 TOKUBETSU B03 | Rivers Lab |  Drivetrain Regulation and Human–Machine Performance</div>
+        <div class="lab-subtitle">This live research dashboard documents a field-based study of cadence regulation, gear selection, cassette configuration and human–machine coordination across repeated road and off-road Strava segment environments.</div>
     </div>
 </section>
 
@@ -300,17 +300,17 @@ body {
     <div class="inner">
         <div class="metrics">
             <div class="metric-block">
-                <div class="metric-label">Analyzed rides</div>
+                <div class="metric-label">Analyzed Rides</div>
                 <div class="metric-value" id="rides">1</div>
                 <div class="metric-note">processed telemetry datasets</div>
             </div>
             <div class="metric-block">
-                <div class="metric-label">Monitored segments</div>
+                <div class="metric-label">Monitored Segments</div>
                 <div class="metric-value" id="segments">9</div>
                 <div class="metric-note">road, variety and off-road segments</div>
             </div>
             <div class="metric-block">
-                <div class="metric-label">Drivetrain setups</div>
+                <div class="metric-label">Drivetrain Setups</div>
                 <div class="metric-value" id="setups">1</div>
                 <div class="metric-note">tracked cassette / chainring systems</div>
             </div>
@@ -321,9 +321,9 @@ body {
 <section class="section">
     <div class="inner two-col">
         <div>
-            <div class="lab-kicker">Current dataset</div>
+            <div class="lab-kicker">Current Dataset</div>
             <div class="section-title" id="ride_title">R001_0513_GR</div>
-            <div class="text-muted">Initial TOKUBETSU test ride used to validate the repository structure, metadata workflow, Di2 export layer and public dashboard pipeline.</div>
+            <div class="text-muted">Initial test ride used to validate the repository structure, metadata workflow, Di2 export layer and public dashboard pipeline.</div>
             <div class="tag-row"><span class="tag orange">GRX Di2</span><span class="tag purple">10–51 cassette</span><span class="tag">field telemetry</span></div>
         </div>
         <div>
@@ -331,8 +331,8 @@ body {
                 <tr><td>Bike</td><td id="bike">Canyon Grizl</td></tr>
                 <tr><td>Cassette</td><td id="cassette">10–51 Shimano Deore XT CS-M8200-12</td></tr>
                 <tr><td>Chainring</td><td id="chainring">44T</td></tr>
-                <tr><td>Wheelset</td><td id="wheelset">GRC1100</td></tr>
-                <tr><td>Tyres</td><td id="tyres">Terra Speed 40</td></tr>
+                <tr><td>Wheelset</td><td id="wheelset">GRC1100 50mm</td></tr>
+                <tr><td>Tyres</td><td id="tyres">Terra Speed 700x40</td></tr>
             </table>
         </div>
     </div>
@@ -340,12 +340,11 @@ body {
 
 <section class="section">
     <div class="inner">
-        <div class="lab-kicker">Processing architecture</div>
-        <div class="section-title">From ride files to research objects</div>
+        <div class="lab-kicker">Processing Architecture</div>
         <div class="pipeline">
-            <div class="pipe-step"><div class="pipe-num">01</div><div class="pipe-title">FIT telemetry</div><div class="pipe-text">Garmin ride file ingestion for power, cadence, speed, GPS and elevation.</div></div>
-            <div class="pipe-step"><div class="pipe-num">02</div><div class="pipe-title">Di2 export</div><div class="pipe-text">GRX Di2 gear-state data aligned with ride-level metadata.</div></div>
-            <div class="pipe-step"><div class="pipe-num">03</div><div class="pipe-title">Segment registry</div><div class="pipe-text">Repeated Strava segments treated as ecological test environments.</div></div>
+            <div class="pipe-step"><div class="pipe-num">01</div><div class="pipe-title">FIT Telemetry</div><div class="pipe-text">Garmin ride file ingestion for power, cadence, speed, GPS and elevation.</div></div>
+            <div class="pipe-step"><div class="pipe-num">02</div><div class="pipe-title">Di2 Export</div><div class="pipe-text">GRX Di2 gear-state data aligned with ride-level metadata.</div></div>
+            <div class="pipe-step"><div class="pipe-num">03</div><div class="pipe-title">Segment Registry</div><div class="pipe-text">Repeated Strava segments treated as ecological test environments.</div></div>
             <div class="pipe-step"><div class="pipe-num">04</div><div class="pipe-title">Dashboard JSON</div><div class="pipe-text">Processed summaries feed visualisations while raw files remain protected.</div></div>
         </div>
     </div>
@@ -353,10 +352,10 @@ body {
 
 <section class="section">
     <div class="inner">
-        <div class="lab-kicker">Gear occupancy</div>
-        <div class="section-title">Observed drivetrain behaviour</div>
+        <div class="lab-kicker">Gear Occupancy</div>
+        <div class="section-title">Observed Drivetrain Behaviour</div>
         <div class="text-muted">Aggregate Di2Stats data are used here to summarize gear-state occupancy, cadence, power and gradient patterns from the first test ride.</div>
-        <div id="gearGrid" class="gear-grid"><div class="text-muted">Gear summary loading…</div></div>
+        <div id="gearGrid" class="gear-grid"><div class="text-muted">Gear Summary Loading…</div></div>
         <div class="footer-note">Current visualization layer uses aggregate Di2Stats exports. Exact shift timing will become available once timestamped shift-event telemetry is integrated.</div>
     </div>
 </section>
