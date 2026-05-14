@@ -3,17 +3,16 @@ TOKUBETSU Gear Visualization Builder
 
 Creates dashboard-ready JSON from a Di2Stats aggregate gear-state export.
 
-Input:
-  - Di2 CSV export
-
-Output:
-  - processed/<ride_id>_gear_summary.json
+Important
+---------
+GitHub Pages is currently publishing the /docs folder. Therefore, dashboard-facing
+JSON should be written to docs/data/ rather than repository-level processed/.
 
 Example:
   python3 notebooks/build_gear_visuals.py \
     --ride-id R001_0513_GR \
     --di2 ~/Desktop/"Tokubetsu Local"/R001_0513_GR_di2.csv \
-    --out processed/R001_0513_GR_gear_summary.json
+    --out docs/data/R001_0513_GR_gear_summary.json
 """
 
 from __future__ import annotations
@@ -46,7 +45,6 @@ def safe_int(value: Any) -> int:
 
 def build_gear_summary(ride_id: str, di2_path: Path) -> Dict[str, Any]:
     df = pd.read_csv(di2_path)
-
     required = ["Gear", "Total Time", "Avg CAD", "Avg POW", "Avg Grade", "Avg KPH"]
     missing = [col for col in required if col not in df.columns]
     if missing:
@@ -54,8 +52,8 @@ def build_gear_summary(ride_id: str, di2_path: Path) -> Dict[str, Any]:
 
     total_time = safe_int(df["Total Time"].sum())
     total_count = safe_int(df["Count"].sum()) if "Count" in df.columns else 0
-
     rows: List[Dict[str, Any]] = []
+
     for _, row in df.sort_values("Total Time", ascending=False).iterrows():
         gear = str(row.get("Gear", ""))
         time_s = safe_int(row.get("Total Time", 0))
@@ -94,14 +92,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Build TOKUBETSU gear visualization JSON")
     parser.add_argument("--ride-id", required=True)
     parser.add_argument("--di2", required=True, type=Path)
-    parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--out", default=None, type=Path)
     args = parser.parse_args()
 
+    output_path = args.out or Path("docs/data") / f"{args.ride_id}_gear_summary.json"
     summary = build_gear_summary(args.ride_id, args.di2)
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    with open(args.out, "w", encoding="utf-8") as f:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
 
+    print(f"Wrote {output_path}")
     print(json.dumps(summary, indent=2))
 
 
