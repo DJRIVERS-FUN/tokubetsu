@@ -1,15 +1,17 @@
 {
   "ride_id": "R001_0513_GR",
   "source_type": "di2stats_aggregate_gear_state",
+  "cassette_profile": "10-51T (10-12-14-16-18-21-24-28-33-39-45-51T)",
+  "gear_label_note": "Original Di2Stats labels normalized to the actual Shimano 10-51T cassette profile used during the ride.",
   "total_time_s": 3993,
   "total_count_proxy": 138,
   "gear_states": 12,
-  "dominant_gear": "1x36",
+  "dominant_gear": "1x39",
   "mean_avg_cadence_by_gear": 71.17,
   "mean_avg_power_by_gear": 130.0,
   "gear_occupancy": [
     {
-      "gear": "1x36",
+      "gear": "1x39",
       "time_s": 1065,
       "time_pct": 26.67,
       "count": 19,
@@ -22,7 +24,7 @@
       "gear_inches": 0.0
     },
     {
-      "gear": "1x42",
+      "gear": "1x45",
       "time_s": 571,
       "time_pct": 14.3,
       "count": 6,
@@ -35,7 +37,7 @@
       "gear_inches": 0.0
     },
     {
-      "gear": "1x32",
+      "gear": "1x33",
       "time_s": 543,
       "time_pct": 13.6,
       "count": 23,
@@ -48,7 +50,7 @@
       "gear_inches": 0.0
     },
     {
-      "gear": "1x11",
+      "gear": "1x10",
       "time_s": 431,
       "time_pct": 10.79,
       "count": 4,
@@ -74,7 +76,7 @@
       "gear_inches": 0.0
     },
     {
-      "gear": "1x25",
+      "gear": "1x24",
       "time_s": 236,
       "time_pct": 5.91,
       "count": 16,
@@ -87,7 +89,7 @@
       "gear_inches": 1.0
     },
     {
-      "gear": "1x22",
+      "gear": "1x21",
       "time_s": 157,
       "time_pct": 3.93,
       "count": 13,
@@ -100,7 +102,7 @@
       "gear_inches": 1.0
     },
     {
-      "gear": "1x15",
+      "gear": "1x14",
       "time_s": 145,
       "time_pct": 3.63,
       "count": 9,
@@ -113,7 +115,7 @@
       "gear_inches": 1.0
     },
     {
-      "gear": "1x17",
+      "gear": "1x16",
       "time_s": 142,
       "time_pct": 3.56,
       "count": 11,
@@ -126,7 +128,7 @@
       "gear_inches": 1.0
     },
     {
-      "gear": "1x19",
+      "gear": "1x18",
       "time_s": 139,
       "time_pct": 3.48,
       "count": 13,
@@ -139,7 +141,7 @@
       "gear_inches": 1.0
     },
     {
-      "gear": "1x13",
+      "gear": "1x12",
       "time_s": 121,
       "time_pct": 3.03,
       "count": 6,
@@ -152,7 +154,7 @@
       "gear_inches": 2.0
     },
     {
-      "gear": "1x50",
+      "gear": "1x51",
       "time_s": 80,
       "time_pct": 2.0,
       "count": 1,
