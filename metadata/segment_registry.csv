@@ -1,1 +1,5 @@
-segment_id,segment_name,location,distance_km,elevation_gain_m,avg_gradient_percent,surface_type,notes
+segment_id,segment_name,strava_url,location,distance_km,elevation_gain_m,avg_gradient_percent,surface_type,notes
+3489505538525210280,monitor_segment_01,https://www.strava.com/activities/18486278969/segments/3489505538525210280,,,,,,Initial monitored segment from test activity 18486278969
+3489505538528287400,monitor_segment_02,https://www.strava.com/activities/18486278969/segments/3489505538528287400,,,,,,Initial monitored segment from test activity 18486278969
+3489505538525138600,monitor_segment_03,https://www.strava.com/activities/18486278969/segments/3489505538525138600,,,,,,Initial monitored segment from test activity 18486278969
+3489505538528358056,monitor_segment_04,https://www.strava.com/activities/18486278969/segments/3489505538528358056,,,,,,Initial monitored segment from test activity 18486278969
