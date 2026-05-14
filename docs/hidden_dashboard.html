@@ -3,50 +3,176 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TOKUBETSU Dashboard</title>
+<title>TOKUBETSU Research Dashboard</title>
 <style>
 body {
     margin: 0;
     padding: 40px;
     background: #ffffff;
-    font-family: Arial, sans-serif;
-    color: #222;
+    color: #222222;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.5;
 }
 .container {
-    max-width: 1100px;
+    width: 100%;
+    max-width: 1400px;
     margin: 0 auto;
 }
+.hero {
+    padding: 50px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #f5f1fb 0%, #fff5ee 100%);
+    margin-bottom: 30px;
+}
+.hero h1 {
+    margin: 0;
+    font-size: 42px;
+    color: #222222;
+}
+.hero p {
+    margin-top: 14px;
+    color: #666666;
+    font-size: 18px;
+    max-width: 900px;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
 .card {
-    border: 1px solid #e5e5e5;
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 24px;
+    background: #ffffff;
+    border: 1px solid #e6e6e6;
+    border-radius: 16px;
+    padding: 28px;
+}
+.card h2 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #6b4ba3;
+}
+.metric {
+    font-size: 42px;
+    font-weight: 700;
+    color: #d96b2b;
+    margin: 10px 0;
 }
 .small {
-    color: #777;
+    color: #666666;
     font-size: 14px;
+}
+.section-title {
+    font-size: 28px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+.chart-placeholder {
+    height: 320px;
+    border-radius: 16px;
+    border: 1px dashed #cccccc;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777777;
+    font-size: 18px;
 }
 </style>
 </head>
 <body>
 <div class="container">
 
-<div class="card">
+<div class="hero">
 <h1>TOKUBETSU</h1>
-<p>Hidden drivetrain research dashboard scaffold.</p>
-<p class="small">Future integration: cadence-power distributions, shift-event overlays, cassette comparison analytics, segment-level summaries.</p>
+<p>
+Ecological drivetrain research platform examining cadence regulation, cassette configuration, shifting behaviour, and human–machine coordination across repeated Strava segment environments.
+</p>
+</div>
+
+<div class="grid">
+
+<div class="card">
+<h2>Analyzed Rides</h2>
+<div class="metric" id="rides">1</div>
+<div class="small">Processed telemetry datasets</div>
 </div>
 
 <div class="card">
-<h2>Current Status</h2>
-<ul>
-<li>Repository initialized</li>
-<li>Metadata templates created</li>
-<li>Dashboard scaffold active</li>
-<li>Awaiting first processed ride dataset</li>
-</ul>
+<h2>Registered Segments</h2>
+<div class="metric" id="segments">9</div>
+<div class="small">Road and off-road monitored segments</div>
+</div>
+
+<div class="card">
+<h2>Drivetrain Setups</h2>
+<div class="metric" id="setups">1</div>
+<div class="small">Tracked cassette/chainring systems</div>
 </div>
 
 </div>
+
+<div class="section-title">Current Ride</div>
+
+<div class="card">
+<h2 id="ride_title">R001_0513_GR</h2>
+<p>
+<strong>Bike:</strong> Canyon Grizl<br>
+<strong>Cassette:</strong> 10–51 Shimano Deore XT CS-M8200-12<br>
+<strong>Chainring:</strong> 44T<br>
+<strong>Wheelset:</strong> GRC1100<br>
+<strong>Tyres:</strong> Terra Speed 40
+</p>
+</div>
+
+<div class="section-title">Analytics Pipeline</div>
+
+<div class="grid">
+
+<div class="card">
+<h2>FIT Parsing</h2>
+<p class="small">Garmin telemetry ingestion pipeline scaffold active.</p>
+</div>
+
+<div class="card">
+<h2>Di2 Synchronization</h2>
+<p class="small">GRX Di2 export synchronization scaffold active.</p>
+</div>
+
+<div class="card">
+<h2>Segment Detection</h2>
+<p class="small">Monitored segment registry integrated.</p>
+</div>
+
+</div>
+
+<div class="section-title">Upcoming Visualizations</div>
+
+<div class="chart-placeholder">
+Cadence / Power / Gear Analytics Coming Online
+</div>
+
+</div>
+
+<script>
+fetch('../processed/summary.json')
+.then(response => response.json())
+.then(data => {
+    if(data.rides_analyzed){
+        document.getElementById('rides').innerText = data.rides_analyzed;
+    }
+    if(data.registered_segments){
+        document.getElementById('segments').innerText = data.registered_segments;
+    }
+    if(data.registered_setups){
+        document.getElementById('setups').innerText = data.registered_setups;
+    }
+    if(data.current_ride && data.current_ride.ride_id){
+        document.getElementById('ride_title').innerText = data.current_ride.ride_id;
+    }
+})
+.catch(error => console.log(error));
+</script>
+
 </body>
 </html>
