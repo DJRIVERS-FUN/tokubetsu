@@ -6,5 +6,5 @@ segment_id,segment_name,strava_url,location,distance_km,elevation_gain_m,avg_gra
 40951081,variety_segment_01,https://www.strava.com/segments/40951081,,,,,,Additional comparative research segment
 40951048,variety_segment_02,https://www.strava.com/segments/40951048,,,,,,Additional comparative research segment
 40951073,variety_segment_03,https://www.strava.com/segments/40951073,,,,,,Additional comparative research segment
-3482191722891206186,offroad_segment_01,https://www.strava.com/activities/18219565141/segments/3482191722891206186,,,,gravel/off-road,Off-road comparative segment
-3482191722890517034,offroad_segment_02,https://www.strava.com/activities/18219565141/segments/3482191722890517034,,,,gravel/off-road,Off-road comparative segment
+3482191722891206186,offroad_segment_01,https://www.strava.com/activities/18219565141/segments/3482191722891206186,,,,,gravel/off-road,Off-road comparative segment
+3482191722890517034,offroad_segment_02,https://www.strava.com/activities/18219565141/segments/3482191722890517034,,,,,gravel/off-road,Off-road comparative segment
