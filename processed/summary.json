@@ -1,0 +1,17 @@
+{
+  "project": "TOKUBETSU",
+  "status": "initialized",
+  "last_updated": "2026-05-14",
+  "rides_analyzed": 1,
+  "registered_segments": 9,
+  "registered_setups": 1,
+  "current_ride": {
+    "ride_id": "R001_0513_GR",
+    "bike": "Canyon Grizl",
+    "cassette": "10-51 Shimano Deore XT CS-M8200-12",
+    "chainring": "44T",
+    "wheelset": "GRC1100",
+    "tyres": "Terra Speed 40"
+  },
+  "notes": "Initial public dashboard summary. Detailed FIT/Di2 processing pipeline scaffold added."
+}
