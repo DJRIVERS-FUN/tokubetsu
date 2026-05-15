@@ -71,12 +71,12 @@ def find_col(*terms):
     return None
 
 gear_col = find_col("gear")
-power_col = find_col("power")
-cadence_col = find_col("cadence")
-speed_col = find_col("speed")
+power_col = find_col("power", "pow")
+cadence_col = find_col("cadence", "cad")
+speed_col = find_col("speed", "spd")
 grade_col = find_col("grade", "gradient")
 time_col = find_col("time")
-distance_col = find_col("distance")
+distance_col = find_col("distance", "dist")
 
 if gear_col is None:
     raise SystemExit("Could not identify gear column")
