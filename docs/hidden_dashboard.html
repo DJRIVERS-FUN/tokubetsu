@@ -122,6 +122,69 @@ function loadRide(ride){
 
 /* initialization moved to ride_index.json loader */
 
+
+fetch('data/comparative_analytics.json?v=1')
+  .then(r=>r.json())
+  .then(data=>{
+
+    // Ride metrics
+    const rideMetrics=document.getElementById('rideMetrics');
+    rideMetrics.innerHTML='';
+
+    data.rides.forEach(r=>{
+      let div=document.createElement('div');
+      div.className='metric-row';
+      div.style.marginBottom='14px';
+      div.innerHTML=
+        '<strong>'+r.ride_id+'</strong><br>'+
+        'Distance: '+r.distance_km+' km<br>'+
+        'Shifts: '+r.shift_count+'<br>'+
+        'Shift frequency: '+r.shift_frequency_per_km+' /km<br>'+
+        'Dominant gear: '+r.dominant_gear;
+      rideMetrics.appendChild(div);
+    });
+
+    // Cadence variance
+    const cadence=document.getElementById('cadenceVariance');
+    cadence.innerHTML='';
+
+    data.cadence_variance_by_gear.forEach(g=>{
+      let div=document.createElement('div');
+      div.style.marginBottom='8px';
+      div.innerHTML=
+        '<strong>'+g.gear+'</strong> — mean cadence: '+
+        g.mean_cadence+' rpm | SD: '+g.cadence_sd;
+      cadence.appendChild(div);
+    });
+
+    // Power stability
+    const power=document.getElementById('powerStability');
+    power.innerHTML='';
+
+    data.power_stability_by_cassette_zone.forEach(z=>{
+      let div=document.createElement('div');
+      div.style.marginBottom='8px';
+      div.innerHTML=
+        '<strong>'+z.cassette_zone+'</strong> — mean power: '+
+        z.mean_power+' W | CV: '+z.power_cv;
+      power.appendChild(div);
+    });
+
+    // Terrain occupancy
+    const terrain=document.getElementById('terrainOccupancy');
+    terrain.innerHTML='';
+
+    data.terrain_gear_occupancy.slice(0,20).forEach(t=>{
+      let div=document.createElement('div');
+      div.style.marginBottom='6px';
+      div.innerHTML=
+        '<strong>'+t.terrain+'</strong> — '+
+        t.gear+' : '+t.pct+'%';
+      terrain.appendChild(div);
+    });
+
+  });
+
 </script>
 </body>
 </html>
