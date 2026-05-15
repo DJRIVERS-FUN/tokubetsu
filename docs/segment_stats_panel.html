@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--lab-purple:#520671;--lab-grey:#6e6c66;--lab-light-grey:#e6e2de;--lab-soft-grey:#f7f6f4;--lab-orange:#d7722c;--lab-soft-orange:#fff4ec;--lab-orange-border:#efd4c2}*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--lab-grey);font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.4}.wrap{width:100%;padding:0 0 20px;background:#fff}.title{font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--lab-purple);margin:0 0 10px}.intro{font-size:16px;margin:0 0 18px}.controls{display:flex;align-items:center;gap:10px;margin:0 0 16px}.controls label{font-family:'DM Mono',monospace;font-size:13px;color:var(--lab-purple)}select{font-family:'DM Mono',monospace;font-size:13px;color:var(--lab-purple);border:1px solid var(--lab-light-grey);border-radius:8px;background:#fff;padding:8px 10px;outline:none}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 18px}.card{background:var(--lab-soft-grey);border:1px solid var(--lab-light-grey);border-radius:8px;padding:14px}.card-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--lab-purple);text-transform:uppercase}.card-value{font-family:'DM Mono',monospace;font-size:24px;color:var(--lab-orange);margin-top:4px}.table-wrap{width:100%;overflow-x:auto;border:1px solid var(--lab-light-grey);border-radius:8px}.segment-table{width:100%;border-collapse:collapse;min-width:920px}.segment-table th{font-family:'DM Mono',monospace;font-size:11px;text-align:left;color:var(--lab-purple);background:var(--lab-soft-orange);border-bottom:1px solid var(--lab-orange-border);padding:10px 8px}.segment-table td{font-family:'DM Mono',monospace;font-size:12px;border-bottom:1px solid var(--lab-light-grey);padding:10px 8px;white-space:nowrap}.segment-table tr:last-child td{border-bottom:none}.muted{font-size:14px;color:var(--lab-grey)}@media(max-width:800px){.cards{grid-template-columns:1fr 1fr}.title{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">Segment Statistics</div>
+  <p class="intro">Repeated distance-window segment summaries derived from processed gear-state telemetry. Current values use the placeholder registry and can later be replaced with fixed Strava segment boundaries.</p>
+  <div class="controls"><label for="rideFilter">Ride</label><select id="rideFilter"><option value="all">All rides</option></select></div>
+  <div class="cards">
+    <div class="card"><div class="card-label">Segments</div><div class="card-value" id="segmentCount">0</div></div>
+    <div class="card"><div class="card-label">Rides</div><div class="card-value" id="rideCount">0</div></div>
+    <div class="card"><div class="card-label">Mean Shifts/km</div><div class="card-value" id="meanShiftDensity">0</div></div>
+    <div class="card"><div class="card-label">Mean Cadence SD</div><div class="card-value" id="meanCadSd">0</div></div>
+  </div>
+  <div class="table-wrap"><table class="segment-table" id="segmentTable"><thead><tr><th>Ride</th><th>Segment</th><th>Distance</th><th>Elapsed</th><th>Power</th><th>Cadence</th><th>Cad SD</th><th>Speed</th><th>Grade</th><th>Shifts</th><th>Shifts/km</th><th>Dom. Gear</th></tr></thead><tbody><tr><td colspan="12" class="muted">Loading segment statistics…</td></tr></tbody></table></div>
+</div>
+<script>
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function avg(rows,key){const vals=rows.map(r=>Number(r[key])).filter(Number.isFinite);return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;}
+let ALL_ROWS=[];
+function populateFilter(rows){const select=document.getElementById('rideFilter');const rides=[...new Set(rows.map(r=>r.ride_id))].sort();rides.forEach(r=>{const opt=document.createElement('option');opt.value=r;opt.textContent=r;select.appendChild(opt);});select.addEventListener('change',()=>render());}
+function render(){const selected=document.getElementById('rideFilter').value;const rows=selected==='all'?ALL_ROWS:ALL_ROWS.filter(r=>r.ride_id===selected);document.getElementById('segmentCount').textContent=new Set(rows.map(r=>r.segment_id)).size;document.getElementById('rideCount').textContent=new Set(rows.map(r=>r.ride_id)).size;document.getElementById('meanShiftDensity').textContent=avg(rows,'shift_density_per_km').toFixed(1);document.getElementById('meanCadSd').textContent=avg(rows,'cadence_sd').toFixed(1);const body=document.querySelector('#segmentTable tbody');if(!rows.length){body.innerHTML='<tr><td colspan="12" class="muted">No segment statistics available.</td></tr>';return;}body.innerHTML=rows.map(r=>'<tr><td>'+esc(r.ride_id)+'</td><td>'+esc(r.segment_name)+'</td><td>'+Number(r.distance_km).toFixed(2)+' km</td><td>'+Number(r.elapsed_s).toFixed(1)+' s</td><td>'+Number(r.avg_power).toFixed(1)+' W</td><td>'+Number(r.avg_cadence).toFixed(1)+' rpm</td><td>'+Number(r.cadence_sd).toFixed(1)+'</td><td>'+Number(r.avg_speed_kph).toFixed(1)+' km/h</td><td>'+(Number(r.avg_grade)*100).toFixed(1)+'%</td><td>'+esc(r.shift_count)+'</td><td>'+Number(r.shift_density_per_km).toFixed(1)+'</td><td>'+esc(r.dominant_gear)+'</td></tr>').join('');}
+fetch('data/segment_stats.json?v=1').then(r=>r.json()).then(rows=>{ALL_ROWS=rows;populateFilter(rows);render();}).catch(()=>{document.querySelector('#segmentTable tbody').innerHTML='<tr><td colspan="12" class="muted">Segment statistics could not be loaded.</td></tr>';});
+</script>
+</body>
+</html>
