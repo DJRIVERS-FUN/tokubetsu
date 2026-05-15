@@ -18,7 +18,12 @@
 <section class="section"><div class="text-muted">Horizontal blocks show time spent in each gear; darker blocks indicate higher power. Vertical purple markers indicate detected shift events.</div><div id="timelineGrid" class="timeline-panel"><div class="text-muted">Timeline Loading…</div></div><div class="footer-note">Source: Di2Stats timeline XLSX. Display labels are remapped to the actual 10–51 cassette teeth.</div></section>
 <section class="section"><div id="gearGrid" class="gear-profile"><div class="text-muted">Gear Summary Loading…</div></div><div class="footer-note">Bars show proportional ride-time occupancy; entries indicate gear-state frequency, while max power captures peak output observed in each gear state.</div></section>
 
-
+<section class="section">
+  <div class="section-title">Segment Statistics</div>
+  <div id="segmentGrid" class="gear-profile">
+    <div class="text-muted">Segment statistics loading…</div>
+  </div>
+</section>
 
 </div>
 <div id="timelineTooltip" class="timeline-tooltip"></div>
@@ -108,7 +113,7 @@ function loadRide(ride){
   document.getElementById('tyres').innerText=ride.tyres;
 
   document.getElementById('timelineGrid').innerHTML='<div class="text-muted">Timeline Loading…</div>';
-  document.getElementById('gearGrid').innerHTML='<div class="text-muted">Gear Summary Loading…</div>';
+  document.getElementById('gearGrid').innerHTML='<div class="text-muted">Gear Summary Loading…</div>';\n  renderSegmentStats(ride.ride_id);
 
   fetch(ride.timeline).then(r=>r.json()).then(renderTimeline).catch(()=>{
     timelineGrid.innerHTML='<div class="text-muted">Timeline data could not be loaded for '+esc(ride.ride_id)+'.</div>';
