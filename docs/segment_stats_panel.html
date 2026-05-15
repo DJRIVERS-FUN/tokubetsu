@@ -25,6 +25,10 @@
 </div>
 <script>
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function distanceValue(r){
+  const v = Number(r.distance_km_registered ?? r.distance_km_matched ?? r.distance_km);
+  return Number.isFinite(v) ? v.toFixed(2) + ' km' : '—';
+}
 function avg(rows,key){const vals=rows.map(r=>Number(r[key])).filter(Number.isFinite);return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;}
 let ALL_ROWS=[];
 function populateFilter(rows){const select=document.getElementById('rideFilter');const rides=[...new Set(rows.map(r=>r.ride_id))].sort();rides.forEach(r=>{const opt=document.createElement('option');opt.value=r;opt.textContent=r;select.appendChild(opt);});select.addEventListener('change',()=>render());}
