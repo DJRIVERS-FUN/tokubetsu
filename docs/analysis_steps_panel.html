@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--lab-purple:#520671;--lab-grey:#6e6c66;--lab-light-grey:#e6e2de;--lab-soft-orange:#fff4ec;--lab-orange-border:#efd4c2;--lab-orange:#d7722c}*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff;color:var(--lab-grey);font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.4}.wrap{width:100%;background:#fff;padding:0}.pipeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;text-align:center}.pipe-step{padding:20px 18px;background:var(--lab-soft-orange);border:1px solid var(--lab-orange-border);border-radius:8px}.pipe-num{font-family:'DM Mono',monospace;color:var(--lab-orange);font-size:13px;margin-bottom:8px}.pipe-title{font-family:'DM Mono',monospace;color:var(--lab-purple);font-size:15px;margin-bottom:8px}.pipe-text{font-size:15px;line-height:1.35}@media(max-width:800px){.pipeline{grid-template-columns:1fr}.pipe-step{padding:18px 16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="pipeline">
+    <div class="pipe-step"><div class="pipe-num">ANALYSIS STEP 01</div><div class="pipe-title">Garmin FIT Telemetry</div><div class="pipe-text">Garmin ride file ingestion for power, cadence, speed, GPS and elevation.</div></div>
+    <div class="pipe-step"><div class="pipe-num">ANALYSIS STEP 02</div><div class="pipe-title">Di2 Gear State Export</div><div class="pipe-text">GRX Di2 gear-state data aligned with ride-level metadata.</div></div>
+    <div class="pipe-step"><div class="pipe-num">ANALYSIS STEP 03</div><div class="pipe-title">Registered Test Environments</div><div class="pipe-text">Repeated Strava segments treated as ecological repeated-measures environments.</div></div>
+    <div class="pipe-step"><div class="pipe-num">ANALYSIS STEP 04</div><div class="pipe-title">Dashboard JSON</div><div class="pipe-text">Processed summaries feed visualisations while raw files remain protected.</div></div>
+  </div>
+</div>
+</body>
+</html>
