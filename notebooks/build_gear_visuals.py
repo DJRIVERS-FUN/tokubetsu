@@ -18,6 +18,32 @@ Example:
 from __future__ import annotations
 
 import argparse
+
+def normalize_gear(g):
+    s = str(g).strip()
+
+    if "," in s:
+        s = s.split(",")[0].strip()
+
+    replacements = {
+        "79x24": "1x24",
+        "74x24": "1x24",
+        "1x11": "1x10",
+        "1x13": "1x12",
+        "1x15": "1x14",
+        "1x17": "1x16",
+        "1x19": "1x18",
+        "1x22": "1x21",
+        "1x25": "1x24",
+        "1x32": "1x33",
+        "1x36": "1x39",
+        "1x42": "1x45",
+        "1x50": "1x51",
+    }
+
+    return replacements.get(s, s)
+
+
 import json
 from pathlib import Path
 from typing import Any, Dict, List
@@ -58,7 +84,7 @@ def build_gear_summary(ride_id: str, di2_path: Path) -> Dict[str, Any]:
         gear = str(row.get("Gear", ""))
         time_s = safe_int(row.get("Total Time", 0))
         rows.append({
-            "gear": gear,
+            "gear": normalize_gear(gear),
             "time_s": time_s,
             "time_pct": round((time_s / total_time * 100), 2) if total_time else 0,
             "count": safe_int(row.get("Count", 0)),
