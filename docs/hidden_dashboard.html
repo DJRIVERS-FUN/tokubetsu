@@ -33,7 +33,22 @@ function renderGearTimeline(data){var holder=document.getElementById('timelineGr
 svg+='<line x1="'+ml+'" y1="'+(h-mb)+'" x2="'+(w-mr)+'" y2="'+(h-mb)+'" stroke="#6e6c66"/><text class="timeline-axis" x="'+(w/2-46)+'" y="'+(h-4)+'">Elapsed time</text></svg>';holder.innerHTML=svg;holder.querySelectorAll('.gear-block').forEach(function(el){el.addEventListener('mousemove',function(evt){showTimelineTooltip(evt,el.getAttribute('data-tip'));});el.addEventListener('mouseleave',hideTimelineTooltip);});}
 function renderTimeline(data){if(data.has_real_gear_timeline){renderGearTimeline(data);}else{document.getElementById('timelineGrid').innerHTML='<div class="text-muted">No real gear-state timeline found.</div>';}}
 
-const RIDE_LIST=[
+let RIDE_LIST=[];
+
+fetch('data/ride_index.json?v=20')
+  .then(r=>r.json())
+  .then(data=>{
+    RIDE_LIST=data;
+    populateRideSelector();
+    loadRide(RIDE_LIST[RIDE_LIST.length-1]);
+  })
+  .catch(err=>{
+    console.error('Failed to load ride index', err);
+  });
+
+/* dynamic ride index loaded */
+
+const RIDE_LIST_OLD=[
   {
     ride_id:'R001_0513_GR',
     label:'R001_0513_GR',
@@ -105,8 +120,7 @@ function loadRide(ride){
   });
 }
 
-populateRideSelector();
-loadRide(RIDE_LIST[RIDE_LIST.length-1]);
+/* initialization moved to ride_index.json loader */
 
 </script>
 </body>
