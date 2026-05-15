@@ -196,6 +196,46 @@ fetch('data/comparative_analytics.json?v=1')
   });
 
 
+
+
+function renderSegmentStats(rideId){
+  fetch('data/segment_stats.json?v=50')
+    .then(r=>r.json())
+    .then(rows=>{
+      rows = rows.filter(r=>r.ride_id===rideId);
+
+      let grid=document.getElementById('segmentGrid');
+
+      if(!rows.length){
+        grid.innerHTML='<div class="text-muted">No segment statistics available.</div>';
+        return;
+      }
+
+      grid.innerHTML=
+        '<div class="gear-header">'+
+        '<div>ID</div><div>Segment</div><div>Time</div><div>Power</div><div>Cad</div><div>SD</div><div>Speed</div><div>Shifts</div><div>Shift/km</div><div>Gear</div></div>';
+
+      rows.forEach(r=>{
+        let row=document.createElement('div');
+        row.className='gear-row';
+
+        row.innerHTML=
+          '<div class="gear-name">'+esc(r.segment_id)+'</div>'+
+          '<div class="gear-value">'+esc(r.segment_name)+'</div>'+
+          '<div class="gear-value">'+r.elapsed_s+' s</div>'+
+          '<div class="gear-value">'+r.avg_power+' W</div>'+
+          '<div class="gear-value">'+r.avg_cadence+' rpm</div>'+
+          '<div class="gear-value">'+r.cadence_sd+'</div>'+
+          '<div class="gear-value">'+r.avg_speed_kph+' km/h</div>'+
+          '<div class="gear-value">'+r.shift_count+'</div>'+
+          '<div class="gear-value">'+r.shift_density_per_km+'</div>'+
+          '<div class="gear-value">'+esc(r.dominant_gear)+'</div>';
+
+        grid.appendChild(row);
+      });
+    });
+}
+
 </script>
 </body>
 </html>
