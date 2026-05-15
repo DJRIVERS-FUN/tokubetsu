@@ -4,9 +4,19 @@ import json
 import pandas as pd
 
 def normalize_gear(g):
-    g = str(g).strip()
+    s = str(g).strip()
+
+    if not s or s.lower() == "nan":
+        return ""
+
+    # Di2Stats sometimes stores metadata after commas, e.g. "1x15,1,10"
+    # or malformed states such as "79x24,1,6".
+    if "," in s:
+        s = s.split(",")[0].strip()
+
     replacements = {
         "79x24": "1x24",
+        "74x24": "1x24",
         "1x11": "1x10",
         "1x13": "1x12",
         "1x15": "1x14",
@@ -19,7 +29,8 @@ def normalize_gear(g):
         "1x42": "1x45",
         "1x50": "1x51",
     }
-    return replacements.get(g, g)
+
+    return replacements.get(s, s)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("xlsx")
