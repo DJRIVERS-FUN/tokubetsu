@@ -1,303 +1,181 @@
-#!/usr/bin/env python3
-"""
-Build timeline JSON for the Tokubetsu hidden dashboard.
 
-Preferred input:
-  data/raw/R001_0513_GR_di2_timeline.xlsx
-
-Fallback input:
-  data/raw/R001_0513_GR.fit
-
-Output:
-  docs/data/R001_0513_GR_timeline.json
-
-The Di2Stats XLSX timeline is preferred because it contains a true sequential
-Gear column. The first row contains timezone metadata and the real header begins
-on row 2, so this script reads the file with header=1.
-
-Install dependencies if needed:
-  pip install pandas openpyxl fitparse
-
-Run from repository root:
-  python3 notebooks/build_timeline_json.py
-"""
-
-from __future__ import annotations
-
-import json
+```python
 from pathlib import Path
-from typing import Any, Dict, Optional
+import argparse
+import json
+import pandas as pd
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-DI2_XLSX_PATH = REPO_ROOT / "data" / "raw" / "R001_0513_GR_di2_timeline.xlsx"
-FIT_PATH = REPO_ROOT / "data" / "raw" / "R001_0513_GR.fit"
-OUT_PATH = REPO_ROOT / "docs" / "data" / "R001_0513_GR_timeline.json"
 
-GEAR_FIELD_CANDIDATES = (
-    "gear",
-    "front_gear",
-    "rear_gear",
-    "front_gear_num",
-    "front_gear_teeth",
-    "rear_gear_num",
-    "rear_gear_teeth",
-    "gear_change_data",
+def normalize_gear(g):
+    g = str(g).strip()
+
+    replacements = {
+        "79x24": "1x24",
+        "1x11": "1x10",
+        "1x13": "1x12",
+        "1x15": "1x14",
+        "1x17": "1x16",
+        "1x19": "1x18",
+        "1x22": "1x21",
+        "1x25": "1x24",
+        "1x32": "1x33",
+        "1x36": "1x39",
+        "1x42": "1x45",
+        "1x50": "1x51",
+    }
+
+    return replacements.get(g, g)
+
+
+parser = argparse.ArgumentParser(
+    description="Convert Di2Stats XLSX timeline export into dashboard JSON"
 )
 
+parser.add_argument(
+    "xlsx",
+    help="Path to Di2Stats timeline XLSX file"
+)
 
-def clean_number(value: Any) -> Optional[float]:
+parser.add_argument(
+    "--out",
+    default="docs/data",
+    help="Output directory"
+)
+
+args = parser.parse_args()
+
+xlsx_path = Path(args.xlsx)
+out_dir = Path(args.out)
+out_dir.mkdir(parents=True, exist_ok=True)
+
+ride_id = xlsx_path.stem.replace("_di2_timeline", "")
+out_path = out_dir / f"{ride_id}_timeline.json"
+
+print(f"Using Di2Stats timeline XLSX: {xlsx_path}")
+print(f"Ride ID: {ride_id}")
+print(f"Writing timeline JSON to: {out_path}")
+
+# ------------------------------------------------------------------
+# Load XLSX
+# ------------------------------------------------------------------
+
+try:
+    df = pd.read_excel(xlsx_path)
+except Exception as e:
+    raise SystemExit(f"Failed to read XLSX: {e}")
+
+# ------------------------------------------------------------------
+# Column normalization
+# ------------------------------------------------------------------
+
+cols = {c.lower().strip(): c for c in df.columns}
+
+# Attempt to detect likely columns
+gear_col = None
+power_col = None
+cadence_col = None
+speed_col = None
+grade_col = None
+time_col = None
+distance_col = None
+
+for c in cols:
+    if "gear" in c:
+        gear_col = cols[c]
+    elif "power" in c:
+        power_col = cols[c]
+    elif "cadence" in c:
+        cadence_col = cols[c]
+    elif "speed" in c:
+        speed_col = cols[c]
+    elif "grade" in c or "gradient" in c:
+        grade_col = cols[c]
+    elif "time" in c:
+        time_col = cols[c]
+    elif "distance" in c:
+        distance_col = cols[c]
+
+if gear_col is None:
+    raise SystemExit("Could not identify gear column in XLSX")
+
+# ------------------------------------------------------------------
+# Build timeline points
+# ------------------------------------------------------------------
+
+points = []
+shift_events = 0
+prev_gear = None
+
+for idx, row in df.iterrows():
+    gear = normalize_gear(row.get(gear_col, ""))
+
+    if not gear:
+        continue
+
     try:
-        if value is None:
-            return None
-        if isinstance(value, str) and value.strip() == "":
-            return None
-        number = float(value)
-        if number != number:
-            return None
-        return number
+        time_s = float(row.get(time_col, idx))
     except Exception:
-        return None
+        time_s = float(idx)
 
+    power = float(row.get(power_col, 0) or 0)
+    cadence = float(row.get(cadence_col, 0) or 0)
+    speed_kph = float(row.get(speed_col, 0) or 0)
+    grade = float(row.get(grade_col, 0) or 0)
+    distance_m = float(row.get(distance_col, 0) or 0)
 
-def normalize_di2_gear(value: Any) -> Optional[str]:
-    """Normalize Di2Stats values like '1x15,1,10' to '1x15'."""
-    if value is None:
-        return None
-    text = str(value).strip()
-    if not text or text.lower() == "nan":
-        return None
-    return text.split(",", 1)[0].strip()
+    shift_event = prev_gear is not None and gear != prev_gear
 
+    if shift_event:
+        shift_events += 1
 
-def build_from_di2_xlsx() -> Dict[str, Any]:
-    try:
-        import pandas as pd
-    except ImportError as exc:
-        raise SystemExit("Missing dependency: pandas. Install with: pip install pandas openpyxl") from exc
+    points.append({
+        "time_s": round(time_s, 2),
+        "gear": gear,
+        "power": round(power, 1),
+        "cadence": round(cadence, 1),
+        "speed_kph": round(speed_kph, 2),
+        "grade": round(grade, 4),
+        "distance_m": round(distance_m, 1),
+        "shift_event": shift_event
+    })
 
-    if not DI2_XLSX_PATH.exists():
-        raise FileNotFoundError(DI2_XLSX_PATH)
+    prev_gear = gear
 
-    df = pd.read_excel(DI2_XLSX_PATH, header=1)
-    required = {"TS", "Gear"}
-    missing = sorted(required - set(df.columns))
-    if missing:
-        raise SystemExit(f"Di2 XLSX missing required columns: {missing}")
+# ------------------------------------------------------------------
+# Output structure
+# ------------------------------------------------------------------
 
-    df = df.dropna(subset=["TS", "Gear"]).copy()
-    df["TS"] = df["TS"].apply(clean_number)
-    df = df.dropna(subset=["TS"])
-    df = df.sort_values("TS")
+output = {
+    "ride_id": ride_id,
+    "source_type": "di2stats_timeline_xlsx",
+    "has_real_gear_timeline": True,
+    "timeline_points": len(points),
+    "shift_event_count": shift_events,
+    "gear_states_found": sorted(list(set(p["gear"] for p in points))),
+    "points": points
+}
 
-    if df.empty:
-        raise SystemExit("Di2 XLSX contained no usable timestamped rows.")
+with open(out_path, "w", encoding="utf-8") as f:
+    json.dump(output, f, ensure_ascii=False)
 
-    first_ts = float(df["TS"].iloc[0])
-    points = []
-    last_time = -999
+print(f"Wrote {out_path}")
+print(f"Timeline points: {len(points)}")
+print(f"Real gear timeline: True")
+print(f"Shift events: {shift_events}")
+```
 
-    for _, row in df.iterrows():
-        ts = clean_number(row.get("TS"))
-        gear = normalize_di2_gear(row.get("Gear"))
-        if ts is None or gear is None:
-            continue
+Then run future rides like this:
 
-        time_s = int(round(ts - first_ts))
+```bash
+python3 notebooks/build_timeline_json.py \
+  data/raw/R003_XXXX_GR_di2_timeline.xlsx
+```
 
-        # Di2Stats rows appear approximately every 8 seconds. Keep all rows.
-        if time_s == last_time:
-            continue
-        last_time = time_s
+The script will now:
 
-        speed = clean_number(row.get("SPD"))
-        grade = clean_number(row.get("GRADE"))
-        cadence = clean_number(row.get("CAD"))
-        power = clean_number(row.get("POW"))
-        distance = clean_number(row.get("DIST"))
-        elevation = clean_number(row.get("ELEV"))
-        heart_rate = clean_number(row.get("HR"))
-
-        # GRADE in this file is percent-like, so convert to decimal for consistency.
-        grade_decimal = None if grade is None else grade / 100
-
-        points.append({
-            "time_s": time_s,
-            "timestamp": int(ts),
-            "gear": gear,
-            "gear_raw": str(row.get("Gear")),
-            "power": power,
-            "cadence": cadence,
-            "speed_kph": speed,
-            "grade": grade_decimal,
-            "distance_m": distance,
-            "elevation_m": elevation,
-            "heart_rate": heart_rate,
-        })
-
-    shifts = 0
-    previous = None
-    for point in points:
-        current = point.get("gear")
-        point["shift_event"] = previous is not None and current != previous
-        if point["shift_event"]:
-            shifts += 1
-        previous = current
-
-    gears = sorted({p["gear"] for p in points if p.get("gear")})
-
-    return {
-        "ride_id": "R001_0513_GR",
-        "source_di2_timeline": str(DI2_XLSX_PATH.relative_to(REPO_ROOT)),
-        "point_count": len(points),
-        "raw_point_count": len(df),
-        "has_real_gear_timeline": True,
-        "fallback_lane": None,
-        "gear_fields_found": ["TS", "Gear", "SPD", "GRADE", "CAD", "POW", "DIST"],
-        "gear_states_found": gears,
-        "shift_event_count": shifts,
-        "points": points,
-    }
-
-
-def field_dict(record: Any) -> Dict[str, Any]:
-    values: Dict[str, Any] = {}
-    for field in record:
-        try:
-            values[field.name] = field.value
-        except Exception:
-            continue
-    return values
-
-
-def get_number(values: Dict[str, Any], *names: str) -> Optional[float]:
-    for name in names:
-        value = values.get(name)
-        if isinstance(value, (int, float)):
-            return float(value)
-    return None
-
-
-def normalize_speed_kph(values: Dict[str, Any]) -> Optional[float]:
-    speed = get_number(values, "enhanced_speed", "speed")
-    if speed is None:
-        return None
-    return speed * 3.6
-
-
-def normalize_grade(values: Dict[str, Any]) -> Optional[float]:
-    grade = get_number(values, "grade")
-    if grade is None:
-        return None
-    if abs(grade) > 1:
-        return grade / 100
-    return grade
-
-
-def infer_gear_label(values: Dict[str, Any]) -> Optional[str]:
-    front_teeth = values.get("front_gear_teeth")
-    rear_teeth = values.get("rear_gear_teeth")
-    front_num = values.get("front_gear_num")
-    rear_num = values.get("rear_gear_num")
-
-    if isinstance(front_teeth, (int, float)) and isinstance(rear_teeth, (int, float)):
-        return f"{int(front_teeth)}x{int(rear_teeth)}"
-    if isinstance(rear_teeth, (int, float)):
-        return f"1x{int(rear_teeth)}"
-    if isinstance(front_num, (int, float)) and isinstance(rear_num, (int, float)):
-        return f"{int(front_num)}x{int(rear_num)}"
-
-    raw = values.get("gear") or values.get("gear_change_data")
-    if raw is not None:
-        return str(raw)
-    return None
-
-
-def build_from_fit() -> Dict[str, Any]:
-    try:
-        from fitparse import FitFile
-    except ImportError as exc:
-        raise SystemExit("Missing dependency: fitparse. Install with: pip install fitparse") from exc
-
-    if not FIT_PATH.exists():
-        raise SystemExit(f"FIT file not found: {FIT_PATH}")
-
-    fit = FitFile(str(FIT_PATH))
-    raw_points = []
-    first_timestamp = None
-    discovered_fields = set()
-    discovered_gear_fields = set()
-
-    for record in fit.get_messages("record"):
-        values = field_dict(record)
-        discovered_fields.update(values.keys())
-        timestamp = values.get("timestamp")
-        if timestamp is None:
-            continue
-        if first_timestamp is None:
-            first_timestamp = timestamp
-        try:
-            time_s = int(round((timestamp - first_timestamp).total_seconds()))
-        except Exception:
-            continue
-
-        for field_name in GEAR_FIELD_CANDIDATES:
-            if field_name in values and values.get(field_name) is not None:
-                discovered_gear_fields.add(field_name)
-
-        point = {
-            "time_s": time_s,
-            "gear": infer_gear_label(values),
-            "power": get_number(values, "power"),
-            "cadence": get_number(values, "cadence"),
-            "speed_kph": normalize_speed_kph(values),
-            "grade": normalize_grade(values),
-        }
-
-        if any(point.get(k) is not None for k in ("gear", "power", "cadence", "speed_kph", "grade")):
-            raw_points.append(point)
-
-    has_real_gear = bool(discovered_gear_fields) and any(p.get("gear") for p in raw_points)
-    if not has_real_gear:
-        for point in raw_points:
-            point["gear"] = "Telemetry"
-
-    points = []
-    last_time = -999
-    for point in raw_points:
-        if point["time_s"] - last_time >= 2:
-            points.append(point)
-            last_time = point["time_s"]
-
-    return {
-        "ride_id": "R001_0513_GR",
-        "source_fit": str(FIT_PATH.relative_to(REPO_ROOT)),
-        "point_count": len(points),
-        "raw_point_count": len(raw_points),
-        "gear_fields_found": sorted(discovered_gear_fields),
-        "has_real_gear_timeline": has_real_gear,
-        "fallback_lane": None if has_real_gear else "Telemetry",
-        "fit_fields_found": sorted(discovered_fields),
-        "points": points,
-    }
-
-
-def main() -> None:
-    OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-
-    if DI2_XLSX_PATH.exists():
-        data = build_from_di2_xlsx()
-        print(f"Using Di2Stats timeline XLSX: {DI2_XLSX_PATH}")
-    else:
-        data = build_from_fit()
-        print(f"Using Garmin FIT fallback: {FIT_PATH}")
-
-    OUT_PATH.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"Wrote {OUT_PATH}")
-    print(f"Timeline points: {data['point_count']}")
-    print(f"Real gear timeline: {data['has_real_gear_timeline']}")
-    if data.get("shift_event_count") is not None:
-        print(f"Shift events: {data['shift_event_count']}")
-
-
-if __name__ == "__main__":
-    main()
+* automatically derive the ride ID
+* write correctly named output JSON
+* normalize gear names
+* detect shift events dynamically
+* avoid hard-coded R001 references
+* write directly into `docs/data/`
