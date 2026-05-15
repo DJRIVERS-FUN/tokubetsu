@@ -1,0 +1,10 @@
+[
+  {
+    "segment_id": "SEG001",
+    "name": "Test Segment 1",
+    "start_m": 0,
+    "end_m": 1000,
+    "surface": "mixed",
+    "notes": "Placeholder segment based on distance range"
+  }
+]

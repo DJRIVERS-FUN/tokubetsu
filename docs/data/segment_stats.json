@@ -1,0 +1,36 @@
+[
+  {
+    "ride_id": "R001_0513_GR",
+    "segment_id": "SEG001",
+    "segment_name": "Test Segment 1",
+    "start_m": 0,
+    "end_m": 1000,
+    "distance_km": 1.0,
+    "elapsed_s": 44.0,
+    "avg_power": 160.6,
+    "avg_cadence": 45.0,
+    "cadence_sd": 34.6,
+    "avg_speed_kph": 2.7,
+    "avg_grade": 0.04,
+    "shift_count": 9,
+    "shift_density_per_km": 9.0,
+    "dominant_gear": "1x14"
+  },
+  {
+    "ride_id": "R002_0515_GR",
+    "segment_id": "SEG001",
+    "segment_name": "Test Segment 1",
+    "start_m": 0,
+    "end_m": 1000,
+    "distance_km": 1.0,
+    "elapsed_s": 51.0,
+    "avg_power": 142.6,
+    "avg_cadence": 41.7,
+    "cadence_sd": 37.1,
+    "avg_speed_kph": 2.4,
+    "avg_grade": 0.0346,
+    "shift_count": 12,
+    "shift_density_per_km": 12.0,
+    "dominant_gear": "1x24"
+  }
+]
