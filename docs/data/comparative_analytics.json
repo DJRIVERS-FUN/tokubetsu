@@ -1,0 +1,434 @@
+{
+  "rides": [
+    {
+      "ride_id": "R001_0513_GR",
+      "timeline_points": 533,
+      "shift_count": 108,
+      "distance_km": 0,
+      "shift_frequency_per_km": null,
+      "dominant_gear": "1x39",
+      "total_time_s": 3993
+    },
+    {
+      "ride_id": "R002_0515_GR",
+      "timeline_points": 533,
+      "shift_count": 108,
+      "distance_km": 21.225,
+      "shift_frequency_per_km": 5.088,
+      "dominant_gear": "1x39",
+      "total_time_s": 4137
+    }
+  ],
+  "cadence_variance_by_gear": [
+    {
+      "gear": "1x15,1,10",
+      "n": 25,
+      "mean_cadence": 0.0,
+      "cadence_sd": 0.0
+    },
+    {
+      "gear": "1x19,1,8",
+      "n": 21,
+      "mean_cadence": 0.0,
+      "cadence_sd": 0.0
+    },
+    {
+      "gear": "1x25,1,6",
+      "n": 43,
+      "mean_cadence": 0.0,
+      "cadence_sd": 0.0
+    },
+    {
+      "gear": "1x28,1,5",
+      "n": 55,
+      "mean_cadence": 0.0,
+      "cadence_sd": 0.0
+    },
+    {
+      "gear": "1x32,1,4",
+      "n": 68,
+      "mean_cadence": 0.0,
+      "cadence_sd": 0.0
+    },
+    {
+      "gear": "1x36,1,3",
+      "n": 134,
+      "mean_cadence": 0.0,
+      "cadence_sd": 0.0
+    },
+    {
+      "gear": "1x22,1,7",
+      "n": 19,
+      "mean_cadence": 0.0,
+      "cadence_sd": 0.0
+    },
+    {
+      "gear": "1x17,1,9",
+      "n": 19,
+      "mean_cadence": 0.0,
+      "cadence_sd": 0.0
+    },
+    {
+      "gear": "1x42,1,2",
+      "n": 71,
+      "mean_cadence": 0.0,
+      "cadence_sd": 0.0
+    },
+    {
+      "gear": "1x50,1,1",
+      "n": 10,
+      "mean_cadence": 0.0,
+      "cadence_sd": 0.0
+    },
+    {
+      "gear": "1x11,1,12",
+      "n": 54,
+      "mean_cadence": 0.0,
+      "cadence_sd": 0.0
+    },
+    {
+      "gear": "1x13,1,11",
+      "n": 14,
+      "mean_cadence": 0.0,
+      "cadence_sd": 0.0
+    },
+    {
+      "gear": "1x15",
+      "n": 25,
+      "mean_cadence": 14.64,
+      "cadence_sd": 30.3
+    },
+    {
+      "gear": "1x19",
+      "n": 21,
+      "mean_cadence": 23.48,
+      "cadence_sd": 28.79
+    },
+    {
+      "gear": "1x25",
+      "n": 43,
+      "mean_cadence": 40.42,
+      "cadence_sd": 36.45
+    },
+    {
+      "gear": "1x28",
+      "n": 55,
+      "mean_cadence": 49.82,
+      "cadence_sd": 33.55
+    },
+    {
+      "gear": "1x32",
+      "n": 68,
+      "mean_cadence": 73.4,
+      "cadence_sd": 22.5
+    },
+    {
+      "gear": "1x36",
+      "n": 134,
+      "mean_cadence": 83.88,
+      "cadence_sd": 7.44
+    },
+    {
+      "gear": "1x22",
+      "n": 19,
+      "mean_cadence": 28.05,
+      "cadence_sd": 36.46
+    },
+    {
+      "gear": "1x17",
+      "n": 19,
+      "mean_cadence": 38.16,
+      "cadence_sd": 39.06
+    },
+    {
+      "gear": "1x42",
+      "n": 71,
+      "mean_cadence": 85.94,
+      "cadence_sd": 3.62
+    },
+    {
+      "gear": "1x50",
+      "n": 10,
+      "mean_cadence": 86.3,
+      "cadence_sd": 0.95
+    },
+    {
+      "gear": "1x11",
+      "n": 54,
+      "mean_cadence": 18.2,
+      "cadence_sd": 34.48
+    },
+    {
+      "gear": "1x13",
+      "n": 14,
+      "mean_cadence": 15.36,
+      "cadence_sd": 31.41
+    }
+  ],
+  "power_stability_by_cassette_zone": [
+    {
+      "cassette_zone": "unknown",
+      "n": 533,
+      "mean_power": null,
+      "power_sd": 0.0,
+      "power_cv": null
+    },
+    {
+      "cassette_zone": "high_speed",
+      "n": 152,
+      "mean_power": 58.11,
+      "power_sd": 122.06,
+      "power_cv": 2.101
+    },
+    {
+      "cassette_zone": "midrange",
+      "n": 300,
+      "mean_power": 184.13,
+      "power_sd": 91.65,
+      "power_cv": 0.498
+    },
+    {
+      "cassette_zone": "climbing",
+      "n": 81,
+      "mean_power": 204.77,
+      "power_sd": 18.45,
+      "power_cv": 0.09
+    }
+  ],
+  "terrain_gear_occupancy": [
+    {
+      "terrain": "rolling",
+      "gear": "1x15,1,10",
+      "count": 13,
+      "pct": 1.93
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x19,1,8",
+      "count": 12,
+      "pct": 1.78
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x25,1,6",
+      "count": 31,
+      "pct": 4.59
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x28,1,5",
+      "count": 32,
+      "pct": 4.74
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x32,1,4",
+      "count": 19,
+      "pct": 2.81
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x22,1,7",
+      "count": 16,
+      "pct": 2.37
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x17,1,9",
+      "count": 6,
+      "pct": 0.89
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x36,1,3",
+      "count": 3,
+      "pct": 0.44
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x42,1,2",
+      "count": 1,
+      "pct": 0.15
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x13,1,11",
+      "count": 5,
+      "pct": 0.74
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x11,1,12",
+      "count": 4,
+      "pct": 0.59
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x15",
+      "count": 25,
+      "pct": 3.7
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x19",
+      "count": 21,
+      "pct": 3.11
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x25",
+      "count": 43,
+      "pct": 6.37
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x28",
+      "count": 55,
+      "pct": 8.15
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x32",
+      "count": 68,
+      "pct": 10.07
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x36",
+      "count": 134,
+      "pct": 19.85
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x22",
+      "count": 19,
+      "pct": 2.81
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x17",
+      "count": 19,
+      "pct": 2.81
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x42",
+      "count": 71,
+      "pct": 10.52
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x50",
+      "count": 10,
+      "pct": 1.48
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x11",
+      "count": 54,
+      "pct": 8.0
+    },
+    {
+      "terrain": "rolling",
+      "gear": "1x13",
+      "count": 14,
+      "pct": 2.07
+    },
+    {
+      "terrain": "descending",
+      "gear": "1x19,1,8",
+      "count": 6,
+      "pct": 6.45
+    },
+    {
+      "terrain": "descending",
+      "gear": "1x22,1,7",
+      "count": 3,
+      "pct": 3.23
+    },
+    {
+      "terrain": "descending",
+      "gear": "1x17,1,9",
+      "count": 13,
+      "pct": 13.98
+    },
+    {
+      "terrain": "descending",
+      "gear": "1x15,1,10",
+      "count": 9,
+      "pct": 9.68
+    },
+    {
+      "terrain": "descending",
+      "gear": "1x28,1,5",
+      "count": 2,
+      "pct": 2.15
+    },
+    {
+      "terrain": "descending",
+      "gear": "1x25,1,6",
+      "count": 1,
+      "pct": 1.08
+    },
+    {
+      "terrain": "descending",
+      "gear": "1x11,1,12",
+      "count": 50,
+      "pct": 53.76
+    },
+    {
+      "terrain": "descending",
+      "gear": "1x13,1,11",
+      "count": 9,
+      "pct": 9.68
+    },
+    {
+      "terrain": "climbing",
+      "gear": "1x25,1,6",
+      "count": 11,
+      "pct": 3.69
+    },
+    {
+      "terrain": "climbing",
+      "gear": "1x28,1,5",
+      "count": 21,
+      "pct": 7.05
+    },
+    {
+      "terrain": "climbing",
+      "gear": "1x32,1,4",
+      "count": 49,
+      "pct": 16.44
+    },
+    {
+      "terrain": "climbing",
+      "gear": "1x36,1,3",
+      "count": 131,
+      "pct": 43.96
+    },
+    {
+      "terrain": "climbing",
+      "gear": "1x42,1,2",
+      "count": 70,
+      "pct": 23.49
+    },
+    {
+      "terrain": "climbing",
+      "gear": "1x50,1,1",
+      "count": 10,
+      "pct": 3.36
+    },
+    {
+      "terrain": "climbing",
+      "gear": "1x15,1,10",
+      "count": 3,
+      "pct": 1.01
+    },
+    {
+      "terrain": "climbing",
+      "gear": "1x19,1,8",
+      "count": 3,
+      "pct": 1.01
+    }
+  ]
+}

@@ -1,14 +1,10 @@
-
-```python
 from pathlib import Path
 import argparse
 import json
 import pandas as pd
 
-
 def normalize_gear(g):
     g = str(g).strip()
-
     replacements = {
         "79x24": "1x24",
         "1x11": "1x10",
@@ -23,84 +19,43 @@ def normalize_gear(g):
         "1x42": "1x45",
         "1x50": "1x51",
     }
-
     return replacements.get(g, g)
 
-
-parser = argparse.ArgumentParser(
-    description="Convert Di2Stats XLSX timeline export into dashboard JSON"
-)
-
-parser.add_argument(
-    "xlsx",
-    help="Path to Di2Stats timeline XLSX file"
-)
-
-parser.add_argument(
-    "--out",
-    default="docs/data",
-    help="Output directory"
-)
-
+parser = argparse.ArgumentParser()
+parser.add_argument("xlsx")
+parser.add_argument("--out", default="docs/data")
 args = parser.parse_args()
 
 xlsx_path = Path(args.xlsx)
+ride_id = xlsx_path.stem.replace("_di2_timeline", "")
 out_dir = Path(args.out)
 out_dir.mkdir(parents=True, exist_ok=True)
-
-ride_id = xlsx_path.stem.replace("_di2_timeline", "")
 out_path = out_dir / f"{ride_id}_timeline.json"
 
-print(f"Using Di2Stats timeline XLSX: {xlsx_path}")
-print(f"Ride ID: {ride_id}")
-print(f"Writing timeline JSON to: {out_path}")
+df = pd.read_excel(xlsx_path)
 
-# ------------------------------------------------------------------
-# Load XLSX
-# ------------------------------------------------------------------
+# Di2Stats timeline exports sometimes put the real header row inside the sheet.
+if "Timezone Info:" in [str(c) for c in df.columns]:
+    df = pd.read_excel(xlsx_path, header=1)
 
-try:
-    df = pd.read_excel(xlsx_path)
-except Exception as e:
-    raise SystemExit(f"Failed to read XLSX: {e}")
+cols = {str(c).lower().strip(): c for c in df.columns}
 
-# ------------------------------------------------------------------
-# Column normalization
-# ------------------------------------------------------------------
+def find_col(*terms):
+    for lc, original in cols.items():
+        if any(t in lc for t in terms):
+            return original
+    return None
 
-cols = {c.lower().strip(): c for c in df.columns}
-
-# Attempt to detect likely columns
-gear_col = None
-power_col = None
-cadence_col = None
-speed_col = None
-grade_col = None
-time_col = None
-distance_col = None
-
-for c in cols:
-    if "gear" in c:
-        gear_col = cols[c]
-    elif "power" in c:
-        power_col = cols[c]
-    elif "cadence" in c:
-        cadence_col = cols[c]
-    elif "speed" in c:
-        speed_col = cols[c]
-    elif "grade" in c or "gradient" in c:
-        grade_col = cols[c]
-    elif "time" in c:
-        time_col = cols[c]
-    elif "distance" in c:
-        distance_col = cols[c]
+gear_col = find_col("gear")
+power_col = find_col("power")
+cadence_col = find_col("cadence")
+speed_col = find_col("speed")
+grade_col = find_col("grade", "gradient")
+time_col = find_col("time")
+distance_col = find_col("distance")
 
 if gear_col is None:
-    raise SystemExit("Could not identify gear column in XLSX")
-
-# ------------------------------------------------------------------
-# Build timeline points
-# ------------------------------------------------------------------
+    raise SystemExit("Could not identify gear column")
 
 points = []
 shift_events = 0
@@ -108,23 +63,28 @@ prev_gear = None
 
 for idx, row in df.iterrows():
     gear = normalize_gear(row.get(gear_col, ""))
-
-    if not gear:
+    if not gear or gear.lower() == "nan":
         continue
 
-    try:
-        time_s = float(row.get(time_col, idx))
-    except Exception:
-        time_s = float(idx)
+    def val(col, default=0):
+        if col is None:
+            return default
+        v = row.get(col, default)
+        try:
+            if pd.isna(v):
+                return default
+        except Exception:
+            pass
+        return v
 
-    power = float(row.get(power_col, 0) or 0)
-    cadence = float(row.get(cadence_col, 0) or 0)
-    speed_kph = float(row.get(speed_col, 0) or 0)
-    grade = float(row.get(grade_col, 0) or 0)
-    distance_m = float(row.get(distance_col, 0) or 0)
+    time_s = float(val(time_col, idx))
+    power = float(val(power_col, 0))
+    cadence = float(val(cadence_col, 0))
+    speed_kph = float(val(speed_col, 0))
+    grade = float(val(grade_col, 0))
+    distance_m = float(val(distance_col, 0))
 
     shift_event = prev_gear is not None and gear != prev_gear
-
     if shift_event:
         shift_events += 1
 
@@ -138,12 +98,7 @@ for idx, row in df.iterrows():
         "distance_m": round(distance_m, 1),
         "shift_event": shift_event
     })
-
     prev_gear = gear
-
-# ------------------------------------------------------------------
-# Output structure
-# ------------------------------------------------------------------
 
 output = {
     "ride_id": ride_id,
@@ -151,31 +106,13 @@ output = {
     "has_real_gear_timeline": True,
     "timeline_points": len(points),
     "shift_event_count": shift_events,
-    "gear_states_found": sorted(list(set(p["gear"] for p in points))),
+    "gear_states_found": sorted(set(p["gear"] for p in points)),
     "points": points
 }
 
-with open(out_path, "w", encoding="utf-8") as f:
-    json.dump(output, f, ensure_ascii=False)
+out_path.write_text(json.dumps(output, indent=2), encoding="utf-8")
 
+print(f"Using Di2Stats timeline XLSX: {xlsx_path}")
 print(f"Wrote {out_path}")
 print(f"Timeline points: {len(points)}")
-print(f"Real gear timeline: True")
 print(f"Shift events: {shift_events}")
-```
-
-Then run future rides like this:
-
-```bash
-python3 notebooks/build_timeline_json.py \
-  data/raw/R003_XXXX_GR_di2_timeline.xlsx
-```
-
-The script will now:
-
-* automatically derive the ride ID
-* write correctly named output JSON
-* normalize gear names
-* detect shift events dynamically
-* avoid hard-coded R001 references
-* write directly into `docs/data/`
