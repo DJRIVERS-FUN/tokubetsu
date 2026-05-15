@@ -1,10 +1,34 @@
 [
   {
-    "segment_id": "SEG001",
-    "name": "Test Segment 1",
-    "start_m": 0,
-    "end_m": 1000,
-    "surface": "mixed",
-    "notes": "Placeholder segment based on distance range"
+    "segment_id": "10360471",
+    "name": "Strava Segment 10360471",
+    "url": "https://www.strava.com/segments/10360471",
+    "surface": "road",
+    "role": "main test environment",
+    "notes": "Primary repeated-measures segment"
+  },
+  {
+    "segment_id": "10367973",
+    "name": "Strava Segment 10367973",
+    "url": "https://www.strava.com/segments/10367973",
+    "surface": "road",
+    "role": "main test environment",
+    "notes": "Primary repeated-measures segment"
+  },
+  {
+    "segment_id": "12677431",
+    "name": "Strava Segment 12677431",
+    "url": "https://www.strava.com/segments/12677431",
+    "surface": "road",
+    "role": "main test environment",
+    "notes": "Primary repeated-measures segment"
+  },
+  {
+    "segment_id": "41432148",
+    "name": "Strava Segment 41432148",
+    "url": "https://www.strava.com/segments/41432148",
+    "surface": "road / mixed",
+    "role": "main test environment",
+    "notes": "Primary repeated-measures segment"
   }
 ]
