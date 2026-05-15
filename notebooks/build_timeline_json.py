@@ -32,12 +32,25 @@ out_dir = Path(args.out)
 out_dir.mkdir(parents=True, exist_ok=True)
 out_path = out_dir / f"{ride_id}_timeline.json"
 
-df = pd.read_excel(xlsx_path)
+# Robust Di2Stats XLSX loader
+df_raw = pd.read_excel(xlsx_path, header=None)
 
-# Di2Stats timeline exports sometimes put the real header row inside the sheet.
-if "Timezone Info:" in [str(c) for c in df.columns]:
-    df = pd.read_excel(xlsx_path, header=1)
+header_row = 0
 
+for i in range(min(10, len(df_raw))):
+    row = [str(v).lower() for v in df_raw.iloc[i].tolist()]
+    joined = " ".join(row)
+
+    if "gear" in joined and ("spd" in joined or "speed" in joined):
+        header_row = i
+        break
+
+df = pd.read_excel(xlsx_path, header=header_row)
+
+# remove unnamed columns
+df = df.loc[:, ~df.columns.astype(str).str.contains('^Unnamed')]
+
+cols = {str(c).lower().strip(): c for c in df.columns}
 cols = {str(c).lower().strip(): c for c in df.columns}
 
 def find_col(*terms):
