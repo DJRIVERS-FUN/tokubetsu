@@ -1,0 +1,14 @@
+[
+  {
+    "ride_id": "R001_0513_GR",
+    "label": "R001_0513_GR",
+    "timeline": "data/R001_0513_GR_timeline.json",
+    "gear": "data/R001_0513_GR_gear_summary.json"
+  },
+  {
+    "ride_id": "R002_0515_GR",
+    "label": "R002_0515_GR",
+    "timeline": "data/R002_0515_GR_timeline.json",
+    "gear": "data/R002_0515_GR_gear_summary.json"
+  }
+]
