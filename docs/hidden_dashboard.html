@@ -18,14 +18,7 @@
 <section class="section"><div class="text-muted">Horizontal blocks show time spent in each gear; darker blocks indicate higher power. Vertical purple markers indicate detected shift events.</div><div id="timelineGrid" class="timeline-panel"><div class="text-muted">Timeline Loading…</div></div><div class="footer-note">Source: Di2Stats timeline XLSX. Display labels are remapped to the actual 10–51 cassette teeth.</div></section>
 <section class="section"><div id="gearGrid" class="gear-profile"><div class="text-muted">Gear Summary Loading…</div></div><div class="footer-note">Bars show proportional ride-time occupancy; entries indicate gear-state frequency, while max power captures peak output observed in each gear state.</div></section>
 
-<section class="section">
-  <div class="section-title">Comparative Analytics</div>
 
-  <div id="rideMetrics" class="timeline-panel"></div>
-  <div id="cadenceVariance" class="timeline-panel"></div>
-  <div id="powerStability" class="timeline-panel"></div>
-  <div id="terrainOccupancy" class="timeline-panel"></div>
-</section>
 
 </div>
 <div id="timelineTooltip" class="timeline-tooltip"></div>
@@ -195,23 +188,6 @@ fetch('data/comparative_analytics.json?v=1')
 
   });
 
-
-fetch('data/comparative_analytics.json?v=24')
-  .then(r=>r.json())
-  .then(data=>{
-    rideMetrics.innerHTML='<div class="section-title">Ride-Level Metrics</div>' +
-      data.rides.map(r=>'<div><strong>'+r.ride_id+'</strong><br>Distance: '+r.distance_km+' km | Shifts: '+r.shift_count+' | Shift frequency: '+r.shift_frequency_per_km+' /km | Dominant gear: '+r.dominant_gear+'</div>').join('<br>');
-
-    cadenceVariance.innerHTML='<div class="section-title">Cadence Variance by Gear</div>' +
-      data.cadence_variance_by_gear.map(g=>'<div><strong>'+g.gear+'</strong> — mean '+g.mean_cadence+' rpm | SD '+g.cadence_sd+'</div>').join('');
-
-    powerStability.innerHTML='<div class="section-title">Power Stability by Cassette Zone</div>' +
-      data.power_stability_by_cassette_zone.map(z=>'<div><strong>'+z.cassette_zone+'</strong> — mean '+z.mean_power+' W | CV '+z.power_cv+'</div>').join('');
-
-    terrainOccupancy.innerHTML='<div class="section-title">Terrain-Specific Gear Occupancy</div>' +
-      data.terrain_gear_occupancy.slice(0,24).map(t=>'<div><strong>'+t.terrain+'</strong> — '+t.gear+': '+t.pct+'%</div>').join('');
-  })
-  .catch(()=>{ rideMetrics.innerHTML='<div class="text-muted">Comparative analytics could not be loaded.</div>'; });
 
 </script>
 </body>
